@@ -1,0 +1,29 @@
+ Feature:Login
+ 
+ Given My Appium is running
+ Going to launch the app on device
+
+ Scenario:Activation Screen   
+  Given I enter "9999900101" into activation field
+   Then I press on "Activate" button
+   
+ Scenario:EULA Screen 
+ 
+   Then I wait for 60 seconds
+   Then I wait to tap on "I Agree" button
+   
+ Scenario:Warning Screen  
+ 
+   Then I wait to tap on "Ok" button 
+   
+     Then I wait for 240 seconds
+      Then I wait for "New Updates" popup to appear
+      Then I press "Ok"
+	   Then I wait for 180 seconds 
+	  Then I press Home button
+       Then I wait for 3 seconds
+	   #Then I press Sync button
+	   # Then I wait for 3 seconds
+		#Then I press GPS button
+		#Then I wait for 3 seconds
+             

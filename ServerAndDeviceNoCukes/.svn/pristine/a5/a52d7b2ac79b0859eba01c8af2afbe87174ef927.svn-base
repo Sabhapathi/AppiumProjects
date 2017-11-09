@@ -1,0 +1,72 @@
+package com.xora.test.admin
+
+import com.xora.mc.util.LoadableElement
+import com.xora.test.SeleniumPostLoginTest
+import com.xora.util.SleepTime._
+import cucumber.api.CucumberOptions
+import cucumber.api.junit.Cucumber
+import cucumber.api.testng.TestNGCucumberRunner
+import org.junit.runner.RunWith
+import org.scalatest.concurrent.Eventually
+import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.time.{Millis, Seconds, Span}
+import org.testng.annotations.Test
+
+/**
+ * Created by murali.kapu on 1/4/2017.
+ */
+
+@RunWith(classOf[Cucumber])
+@CucumberOptions(
+  features = Array("src/test/resources/features/forms.feature"),
+  glue = Array("com/xora/test/stepDefinition"),
+  dryRun = false,
+  plugin = Array("html:output"))
+class AdhocFormSubmitTest extends SeleniumPostLoginTest with LoadableElement with ShouldMatchers with Eventually {
+
+  @Test
+  def testSubmitAdhocForm(): Unit = {
+
+// Device side execution
+    new TestNGCucumberRunner(this.getClass).runCukes()
+
+    var submittedFormsListPage = securedPage.loadSubmittedFormsListPage
+    val formFilterPopup = submittedFormsListPage.formFilter()
+    formFilterPopup.selectAllForms("Yes")
+    formFilterPopup.selectAllLinkedActivities("Yes")
+    submittedFormsListPage = formFilterPopup.saveAndClose
+    sleepTime(minWaitTime * 1000)
+
+// Verifying Submitted Forms on SubmittedFormsListPage
+    submittedFormsListPage.getLatestSubmittedFormRow
+    val dateAndTime = submittedFormsListPage.getLatestDateAndTime
+    eventually(timeout(Span(180, Seconds)), interval(Span(3000, Millis))) {
+      webDriver.navigate().refresh()
+      submittedFormsListPage.getLatestFormName should be("AutomationForm")
+      submittedFormsListPage.getLatestFormSubmittedBy should be("Android_Worker2")
+      submittedFormsListPage.getLatestFormLinkedActivity should be("Ad hoc")
+      submittedFormsListPage.validateLatestDateColumnIsNotEmpty() should be(true)
+    }
+
+// Validate SubmittedForm Labels and Values
+    val viewSubmittedDetailsPage = submittedFormsListPage.contextMenuOfLatestForm().viewSubmittedFormDetail()
+    viewSubmittedDetailsPage.getSubmittedFormLabels should be(List("Form Name", "Submitted by", "Date/Time", "Address", "Text", "Number", "Odometer", "Money", "Check", "SelectList", "multiselect", "Time", "Date", "Pic", "Signature"))
+    viewSubmittedDetailsPage.getSubmittedFormValues should be(List("AutomationForm", "Android_Worker2", "Date/time", "", "Happy to Automate", "12345", "1000", "$500.00", "Yes", "a", "automation,manual,automation1", "11:45 p.m.", "01/05/2017", "", "", ""))
+
+// Validate SubmittedForm Labels and Values on Second Form
+    submittedFormsListPage = viewSubmittedDetailsPage.clickSubmittedFormsPageLink
+    val submittedFormDetailPage1 = submittedFormsListPage.contextMenuOfSubmittedForm("AutomateForm").viewSubmittedFormDetail()
+    submittedFormDetailPage1.getSubmittedFormLabels should be(List("Form Name", "Submitted by", "Date/Time", "Address", "Text", "Checkbox", "SelectList", "Money", "MultiSelect", "Picture", "Odometer", "Number_2", "Time", "Date", "Signature", "cascade"))
+    submittedFormDetailPage1.getSubmittedFormValues should be (List("AutomateForm", "Android_Worker2", "Date/time", "", "", "No", "", "$0.00", "", "", "", "", "06:00 p.m.", "01/06/2017", "", "Country: " +
+      "State/Prov: "+
+      "County/Area: "));
+
+// Verifying Submitted Forms on WAL Page
+    val workerListPage = securedPage.loadWorkerListPage
+    val workerActivityPage = workerListPage.contextMenu("Android_Worker2").workerActivity()
+    workerActivityPage.sort("Date", "descending")
+    workerActivityPage.getFirstNActivities(2) should be (List("Ad hoc Form: AutomationForm","Ad hoc Form: AutomateForm"))
+     }
+
+
+}

@@ -1,0 +1,172 @@
+package com.xora.mc.pages.jobs
+
+import com.xora.mc.pages.jobs.JobListPageContextMenuPopup._
+import com.xora.mc.pages.ListPageContextMenuPopup
+//import com.xora.mc.pages.jobs.wizards.EditWizardPopup
+import com.xora.util.PropertyLoader
+import org.openqa.selenium.{By, WebDriver}
+import com.xora.mc.util.XpathUtils._
+import org.openqa.selenium.support.ui.{ExpectedConditions, WebDriverWait}
+import scala.collection.JavaConverters._
+//import com.xora.mc.pages.jobs.wizards.{EditWizardPopup}
+import com.xora.util.SleepTime._
+
+/**
+ * Created by Nandini.Sullekal on 1/3/2017.
+ */
+
+
+object JobListPageContextMenuPopup
+{
+  sealed abstract class CONTEXT_MENU_POPUP_OPTION(val displayValue: String)
+  case object REASSIGN_JOB extends CONTEXT_MENU_POPUP_OPTION("Reassign Job")
+  case object ASSIGN_JOB extends CONTEXT_MENU_POPUP_OPTION("Assign Job")
+  case object VIEW_JOB_DETAIL extends CONTEXT_MENU_POPUP_OPTION("View Job Detail")
+  case object EDIT_JOB_INFORMATION extends CONTEXT_MENU_POPUP_OPTION("Edit Job Information")
+  case object EDIT_JOB_ACTIONS extends CONTEXT_MENU_POPUP_OPTION("Edit Job Actions")
+  case object DELETE_JOB extends CONTEXT_MENU_POPUP_OPTION("Delete Job")
+  case object DELETE_ALWAYS_AVAILABLE_JOB extends CONTEXT_MENU_POPUP_OPTION("Delete Always Available Job")
+  case object VIEW_JOB_MAP extends CONTEXT_MENU_POPUP_OPTION("View Job Map")
+  case object WORKER_JOBS extends CONTEXT_MENU_POPUP_OPTION("Worker Jobs")
+
+}
+
+
+class JobListPageContextMenuPopup(driver: WebDriver, parentPage: JobListPage) extends
+ListPageContextMenuPopup[JobListPage](driver: WebDriver, parentPage: JobListPage) {
+
+
+  val mcBaseUrl = PropertyLoader.loadProperty("mc.url")
+  val DIALOG_CONFIRM_CLASS = "dialog"
+  val DIALOG_BUTTON_CLASS = "linkButton"
+  val DELETE_AAJ_ONLY_THIS_JOB_BUTTON_ID = "jobInstanceTypeCURRENT"
+  val DELETE_AAJ_ALL_FUTURE_JOB_BUTTON_ID = "jobInstanceTypeALL_FEATURE"
+  val DELETE_AAJ_CURRENT_AND_ALL_FUTURE_JOB_BUTTON_ID = "jobInstanceTypeCURRENT_AND_ALL_FEATURE"
+  val CONTEXT_MENU_LIST_ID = "drillDownUL"
+  val CONTEXT_MENU_LIST_ITEM_CLASS = "actionList"
+  val CONTEXT_MENU_CLOSE_BUTTON_ID = "puClose"
+  val CONTEXT_MENU_HEADER = "cssbox_head"
+
+  def assignJob()={
+    this.selectOption(ASSIGN_JOB)
+//    new AssignJobPopup(driver, parentPage)
+  }
+  def reassignJob()={
+    this.selectOption(REASSIGN_JOB)
+//    new AssignJobPopup(driver, parentPage)
+  }
+  def JobDetails()= {
+    this.selectOption(VIEW_JOB_DETAIL)
+    new ViewJobDetailPage(driver, parentPage)
+  }
+  def editJobInformation()= {
+    this.selectOption(EDIT_JOB_INFORMATION)
+//    new EditWizardPopup(driver, parentPage)
+  }
+  def editJobActions()= {
+    this.selectOption(EDIT_JOB_ACTIONS)
+//    new EditJobActionsPage(driver, parentPage)
+  }
+  def deleteJobCancel()={
+    this.selectOption(DELETE_JOB)
+    cancelDeleteJobConfirmDialog()
+    parentPage
+  }
+  def deleteJobDelete()={
+    this.selectOption(DELETE_JOB)
+    deleteDeleteJobConfirmationDialog()
+    parentPage
+  }
+
+  def deleteAAJCancel(deleteOption: String) = {
+    this.selectOption(DELETE_ALWAYS_AVAILABLE_JOB)
+    sleepTime(minWaitTime * 1000)
+    cancelDeleteAAJConfirmationDialog(deleteOption)
+  }
+
+  def deleteAAJDelete(deleteOption: String) = {
+    this.selectOption(DELETE_ALWAYS_AVAILABLE_JOB)
+    sleepTime(minWaitTime * 1000)
+    deleteDeleteAAJConfirmationDialog(deleteOption)
+  }
+
+  def viewJobMap()={
+    this.selectOption(VIEW_JOB_MAP)
+//    new JobsMapPage(driver, mcBaseUrl)
+  }
+  def workerJobs(){
+    this.selectOption(WORKER_JOBS)
+  }
+
+  private def cancelDeleteJobConfirmDialog(){
+    val confirmDialog = driver.findElement(By.xpath("//div[" + hasCssClass(DIALOG_CONFIRM_CLASS) + "]"))
+    val cancelButton = confirmDialog.findElement(By.xpath("//a[" + hasCssClass(DIALOG_BUTTON_CLASS) + "]//span[text() = '" + "Cancel" + "']"))
+    cancelButton.click()
+  }
+  private def deleteDeleteJobConfirmationDialog(){
+    val confirmDialog = driver.findElement(By.xpath("//div[" + hasCssClass(DIALOG_CONFIRM_CLASS) + "]"))
+    val deleteButton = confirmDialog.findElement(By.xpath("//a[" + hasCssClass(DIALOG_BUTTON_CLASS) + "]//span[text() = '" + "Delete" + "']"))
+    sleepTimeInSecond(1)
+    deleteButton.click()
+  }
+
+  private def cancelDeleteAAJConfirmationDialog(deleteOption:String) {
+    val confirmDialog = driver.findElement(By.xpath("//div[" + hasCssClass(DIALOG_CONFIRM_CLASS) + "]"))
+    val cancelButton = confirmDialog.findElement(By.xpath("//a[" + hasCssClass(DIALOG_BUTTON_CLASS) + "]//span[text() = '" + "Cancel" + "']"))
+    selectDeleteOptionForAAJ (deleteOption)
+    cancelButton.click()
+  }
+  private def deleteDeleteAAJConfirmationDialog(deleteOption:String) {
+    val confirmDialog = driver.findElement(By.xpath("//div[" + hasCssClass(DIALOG_CONFIRM_CLASS) + "]"))
+    val deleteButton = confirmDialog.findElement(By.xpath("//a[" + hasCssClass(DIALOG_BUTTON_CLASS) + "]//span[text() = '" + "Delete" + "']"))
+    try{selectDeleteOptionForAAJ(deleteOption)}
+    catch {
+      case e: Exception => {
+        println("This is the last AAJ Job")
+      }
+    }
+    deleteButton.click()
+    sleepTime((minWaitTime+1) * 1000)
+  }
+
+  private def selectDeleteOptionForAAJ (deleteOption:String) {
+    if(!deleteOption.equals("NA"))  {
+      deleteOption match {
+        case "Only this Job" => {
+          driver.findElement(By.id(DELETE_AAJ_ONLY_THIS_JOB_BUTTON_ID)).click()
+        }
+        case "All future jobs in this series" => {
+          driver.findElement(By.id(DELETE_AAJ_ALL_FUTURE_JOB_BUTTON_ID)).click()
+        }
+        case "This Job and all future Jobs" => {
+          driver.findElement(By.id(DELETE_AAJ_CURRENT_AND_ALL_FUTURE_JOB_BUTTON_ID)).click()
+        }
+      }
+    }
+  }
+
+  protected def selectOption(option: JobListPageContextMenuPopup.CONTEXT_MENU_POPUP_OPTION) {
+    this.selectOption(option.displayValue)
+    sleepTime(minWaitTime*2000)
+  }
+
+  def listContextMenuItems():List[String]=
+  {
+    val menuItemEls = driver.findElements(By.xpath("//ul[@id='" + CONTEXT_MENU_LIST_ID +"']//li[@class='" + CONTEXT_MENU_LIST_ITEM_CLASS + "']")).asScala
+    val menuItems = menuItemEls.map(_.getText)
+    menuItems.toList
+  }
+
+  def closeContextMenu()
+  {
+    val closeButton = new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.className(CONTEXT_MENU_CLOSE_BUTTON_ID)))
+    closeButton.click()
+  }
+
+  def getContextMenuHeader = {
+    val contextMenuHeaderEl =  new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.className(CONTEXT_MENU_HEADER)))
+    val header = contextMenuHeaderEl.getText
+    header
+  }
+
+}

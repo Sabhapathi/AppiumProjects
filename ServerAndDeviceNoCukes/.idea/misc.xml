@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/classes" />
+  </component>
+  <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="svn://svn.xoraint.com/xora/QA/.idea" />
+                  <option value="svn://svn.xoraint.com/xora/QA/automation" />
+                  <option value="svn://svn.xoraint.com/xora/QA/branches" />
+                  <option value="svn://svn.xoraint.com/xora/QA/lib" />
+                  <option value="svn://svn.xoraint.com/xora/QA/logs" />
+                  <option value="svn://svn.xoraint.com/xora/QA/src" />
+                  <option value="svn://svn.xoraint.com/xora/QA/tags" />
+                  <option value="svn://svn.xoraint.com/xora/QA/temp" />
+                  <option value="svn://svn.xoraint.com/xora/QA/utils" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="svn://svn.xoraint.com/xora/QA/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="mySupportsUserInfoFilter" value="true" />
+  </component>
+</project>

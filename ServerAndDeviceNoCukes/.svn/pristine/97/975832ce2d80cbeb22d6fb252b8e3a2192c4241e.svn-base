@@ -1,0 +1,136 @@
+# Created by Murali.Kapu at 12/27/2016
+
+Feature: FormSanity
+
+#  Background: Login
+  Scenario: FormSanity
+    Given user is on mobile home page
+
+    When user enter "999999999" into activation field
+#Given I enter "999999999" to activate worker
+    Then he press on "Activate" button
+    Then he should see the text "Set Bridge URL"
+    Then he change the URL to "http://crt-bridge.xora.com/bridge/DeviceBridgeServlet"
+    Then he press on "Update" button
+    When user enter valid phone number "9999900111"
+    Then he press on "Activate" button
+    Then he should see the text "EULA"
+    When user clicks on "I Agree" button
+    Then he should see the text "Warning"
+    And user clicks on "Ok" button
+#    Then I wait for "New Updates" popup and tap on "OK" button
+
+
+#  Feature: Xora
+
+#  Scenario: Forms:OpenForm
+    Then I wait for 240 seconds
+    Then I press "Ok"
+    Then I press Sync image_button 1
+    Then I wait for 4 seconds
+    Then I press GPS image_button 2
+    Then I wait for 4 seconds
+
+#  Scenario:TimeSheets
+
+    Then I touch "Timesheets" feature icon
+    Then I wait for 2 seconds
+   Then I press "Start Shift"
+   Then I wait for 2 seconds
+##Scenario:TimeSheets:Start Break
+    Then I press "Start Break"
+   Then I wait for 2 seconds
+##Scenario:TimeSheets:End Break
+   Then I press "End Break"
+   #Then I press "Submit"
+    Then I wait for 4 seconds
+##Scenario:TimeSheets:End Shift
+    Then I press "End Shift"
+##    Then I press "Submit"
+
+
+#    Scenario : Forms
+   Then I press Home image_button 0
+    Then I wait for 4 seconds
+    Then I press Sync image_button 1
+    Then I wait for 4 seconds
+    Then I touch "Forms" feature icon
+    Then I wait for 5 seconds
+    Then I open "AutomationForm" form
+    Then I wait for 2 seconds
+#  Scenario: Forms:without filling fields
+    Then I press "Submit"
+    Then I press "Skip"
+    Then I wait for 5 seconds
+
+#
+#  Scenario: Forms: fill the form
+#  Scenario: Forms Submission
+
+  #Then I touch "Forms" feature icon
+  #Then I wait for 5 seconds
+    Then I open "AutomationForm" form
+    Then I wait for 5 seconds
+    Then I enter "abcdef123" into text_field1
+
+#  #Then I enter "12345" into multi-text field
+#
+#  #Scenario: Forms: Form Numeric precision 1
+#  #Then I enter "1234.1" into number_precision field
+#
+#  #Scenario: Forms: Form Money field
+#  #Then I enter "123" into Money field
+#
+#  #Then I enter "500000" into Odometer field
+#
+#  #Scenario: Forms: Single Select
+#    Then I select an item "b" in the list
+#
+#  #Scenario: Forms: Multi-Select
+#    Then I have selected multiple items "manual","automation","automation1" in the list
+#    Then I press "Ok"
+#    Then I press "Next"
+#  #Scenario: Forms: Picture capture and Signature
+#  #Then I press "Tap to capture one or more pictures"
+#  #Then I wait for 2 seconds
+#  #Then I capture picture
+#  #Then I wait for 2 seconds
+#  #Then I save picture
+#  #Then I wait for 5 seconds
+#  #Then I press "OK"
+#  #Then I press "Ok"
+#    Then I press "Next"
+#
+#    Then I press "Tap to capture one or more signatures"
+#    Then I wait for 5 seconds
+#  #Then I swipe left
+#  #Then I swipe right
+#    Then I press "Save"
+#    Then I press "Next"
+#
+#  Scenario: Forms: Check-Box and TimeChange
+#  #Then I increment r decrement the Time
+#    Then I press "Next"
+#    Then I check the check-box
+#    Then I press "Next"
+#    Then I wait for 2 seconds
+#
+#  Scenario: Forms: Cascade list
+#    Then I select an item "Canada" in the first dropdown cascading list
+#    Then I press "Next"
+#    Then I select an item "BC" in the second dropdown list
+#    Then I press "Next"
+#    Then I select an item "Capital" in the next to second cascading list
+#    Then I press "Next"
+##Then I press "Next"
+##Then I press "Next"
+
+#  Scenario: Form submit
+    Then I press "Submit"
+#  Scenario: Form Email
+#    Then I enter an email address "abc@bc.com " to send submitted Action
+    Then I press "Skip"
+    Then I wait for 3 seconds
+#    Then I see the text "A Copy of the Form will be emailed shortly"
+#    Then I press Home button
+#    Then I wait for 3 seconds

@@ -1,0 +1,173 @@
+package com.xora.mc.pages.wizards
+
+import com.xora.mc.pages.jobs.JobListPage
+import com.xora.mc.pages.jobs.wizards.CreateWizardPopup
+import com.xora.mc.pages.wizards.AbstractWizardPopup._
+import com.xora.mc.util.XpathUtils._
+import com.xora.util.Optionally
+import com.xora.util.SleepTime._
+import org.openqa.selenium.support.ui.{ExpectedConditions, WebDriverWait}
+import org.openqa.selenium.{By, WebDriver, WebElement}
+
+import scala.collection.JavaConverters._
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: admin
+ * Date: 8/1/13
+ * Time: 10:39 AM
+ * To change this template use File | Settings | File Templates.
+ */
+abstract class AbstractWizardPopup[T](driver: WebDriver, parent: T) extends Optionally
+{
+  new WebDriverWait(driver, 20)
+    .until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(IFRAME_ID))
+
+  protected var jobListPage: JobListPage = _
+
+  protected def selectInitialStep()
+
+  def saveAndClose: T =
+  {
+    selectInitialStep()
+    val submitButton = new WebDriverWait(driver, 20).until(
+      ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='submit']")))
+    submitButton.click()
+    sleepTime(minWaitTime * 2000)
+    driver.switchTo.defaultContent
+    new WebDriverWait(driver, 40).until(ExpectedConditions.invisibilityOfElementLocated(By.id(XORA_UNDERLAY_ID)))
+    parent
+  }
+
+  def saveAndNew = {
+    val saveAndNewButton = new WebDriverWait(driver, maxWaitTime).until(
+      ExpectedConditions.elementToBeClickable(By.id(SAVE_AND_NEW)))
+    saveAndNewButton.click()
+    sleepTime(minWaitTime * 1000)
+    driver.switchTo().defaultContent()
+    sleepTime(minWaitTime * 1000)
+    new CreateWizardPopup(driver,jobListPage)
+    }
+
+  def saveAndCloseOrCancelIfErrorMessagePresent: T =  {
+    var errorMessage: List[WebElement] = List()
+    var errorMessageTextList: List[String] = List()
+    selectInitialStep()
+    val submitButton = new WebDriverWait(driver, 20).until(
+      ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='submit']")))
+    submitButton.click()
+    sleepTime(minWaitTime * 5000)
+    optionally {
+      errorMessage = driver.findElements(By.className(ERROR_MESSAGE_CLASS)).asScala.toList
+      errorMessageTextList = errorMessage.map(_.getText)
+    }
+    if(errorMessageTextList.isEmpty){
+      driver.switchTo.defaultContent
+   }
+    else {
+      val cancelButton = new WebDriverWait(driver, maxWaitTime).until(
+        ExpectedConditions.elementToBeClickable(By.id(CANCEL_BUTTON_ID)))
+      cancelButton.click()
+      new WebDriverWait(driver, maxWaitTime).until(ExpectedConditions.invisibilityOfElementLocated(By.id(CANCEL_BUTTON_ID)))
+    }
+    parent
+  }
+
+  def saveAndCloseForErrorValidationTest() {
+    selectInitialStep()
+    val submitButton = new WebDriverWait(driver, maxWaitTime).until(
+      ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='submit']")))
+    submitButton.click()
+  }
+
+  def saveAndCloseForJob(){
+    val submitButton = new WebDriverWait(driver, maxWaitTime).until(
+      ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='submit']")))
+    submitButton.click()
+  }
+
+  def cancel: T =
+  {
+    val cancelButton = new WebDriverWait(driver, maxWaitTime).until(
+      ExpectedConditions.elementToBeClickable(By.id(CANCEL_BUTTON_ID)))
+    cancelButton.click()
+    driver.switchTo.defaultContent
+    new WebDriverWait(driver, 40).until(ExpectedConditions.invisibilityOfElementLocated(By.id(XORA_UNDERLAY_ID)))
+    parent
+  }
+
+  def clickStep(step: String)
+  {
+    val stepLink = driver.findElement(By.xpath("//ul[@id='" + STEP_LIST_ID + "']//span[contains(.//text(), '" + step + "')]"))
+    stepLink.click()
+  }
+
+  def clickNext(){
+    val nextButton = new WebDriverWait(driver, maxWaitTime).until(
+      ExpectedConditions.elementToBeClickable(By.id(NEXT_BUTTON_ID)))
+    nextButton.click()
+  }
+
+  def errorMessageText() = {
+    var errorMessageText: List[String] = List()
+    try {
+      val alertEl = new WebDriverWait(driver, maxWaitTime)
+      if (alertEl.until(ExpectedConditions.alertIsPresent()) != null) {
+        val errorMessage = driver.switchTo().alert().getText
+        errorMessageText = errorMessageText ::: List(errorMessage)
+        driver.switchTo().alert().accept()
+        driver.switchTo().defaultContent()
+      }
+    }
+    catch {
+      case e: Exception =>
+        val errorMessage = driver.findElements(By.className(ERROR_MESSAGE_CLASS)).asScala
+        errorMessageText = errorMessage.filter(!_.getText.isEmpty).map(_.getText.trim).toList
+        if (errorMessageText.isEmpty){
+          val confirmDialog = driver.findElement(By.xpath("//div[" + hasCssClass(DIALOG_CONFIRM_CLASS) + "]"))
+          val confirmDialogMsg = driver.findElement(By.xpath("//div[" + hasCssClass(DIALOG_CONFIRM_CLASS) + "]//div["+hasCssClass(DIALOG_MSG_CLASS) + "]")).getText
+          errorMessageText = errorMessageText ::: List(confirmDialogMsg)
+          val okButton = confirmDialog.findElement(By.xpath("//a[" + hasCssClass(DIALOG_BUTTON_CLASS) + "]//span[text() = '" + "OK" + "']"))
+          okButton.click()
+        }
+      }
+    errorMessageText
+  }
+
+  def close() {
+    driver.switchTo().defaultContent()
+    val closeEl = driver.findElement(By.className("close"))
+    closeEl.click()
+  }
+
+  def getAllButtons = {
+    val buttonDivEl = driver.findElement(By.className(BUTTONS_PANEL_CLASS))
+    val buttonsEls = buttonDivEl.findElements(By.xpath("//a["+hasCssClass(BUTTONS_LINK_CLASS_NAME)+"]")).asScala
+    val buttonsList = buttonsEls.map(_.getText.trim).toList
+    buttonsList
+  }
+
+  def getPopUpTitle = {
+    val popUpTitleEl = driver.findElement(By.id(POPUP_TITLE_ID))
+    val popUpTitleText = popUpTitleEl.getText
+    popUpTitleText.trim
+  }
+}
+
+object AbstractWizardPopup
+{
+  val XORA_UNDERLAY_ID = "xora-underlay"
+  val STEP_LIST_ID = "steps"
+  val CANCEL_BUTTON_ID = "cancel"
+  val SUBMIT_BUTTON_ID = "submit"
+  val IFRAME_ID = "xrCommonDialogIFrame"
+  val ERROR_MESSAGE_CLASS = "errorMessage"
+  val NEXT_BUTTON_ID = "next"
+  val SAVE_AND_NEW = "saveAndNewButton"
+  val DIALOG_CONFIRM_CLASS = "dialog"
+  val DIALOG_BUTTON_CLASS = "linkButton"
+  val DIALOG_MSG_CLASS = "body"
+  val BUTTONS_LINK_CLASS_NAME = "linkButton"
+  val BUTTONS_PANEL_CLASS = "buttonPanel"
+  val POPUP_TITLE_ID = "popupTitle"
+}

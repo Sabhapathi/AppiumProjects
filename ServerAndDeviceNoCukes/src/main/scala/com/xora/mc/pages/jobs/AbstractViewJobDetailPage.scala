@@ -1,0 +1,332 @@
+package com.xora.mc.pages.jobs
+
+import com.xora.mc.pages.jobs.AbstractViewJobDetailPage._
+import com.xora.mc.util.XpathUtils._
+import com.xora.util.PropertyLoader
+import com.xora.util.SleepTime._
+import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
+import org.openqa.selenium.{By, WebDriver, WebElement}
+
+import scala.collection.JavaConverters._
+
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: Nandini
+ * Date: 7/31/13
+ * Time: 2:17 PM
+ * To change this template use File | Settings | File Templates.
+ */
+abstract class AbstractViewJobDetailPage[T](driver: WebDriver, parentPage: T) {
+
+  val mcBaseUrl = PropertyLoader.loadProperty("mc.url")
+
+
+  def pageHeadLine(): String = {
+    val headLineText = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.visibilityOfElementLocated(By.className(PAGE_HEADLINE_CLASS))).getText
+    headLineText
+  }
+
+  def getJobSummary : List[String] = {
+    val jobSummaryEls = driver.findElements(By.xpath(JOB_SUMMARY_XPATH)).asScala
+    val jobSummaryList = jobSummaryEls.map(_.getText).toList.patch(6, Nil, 1)
+    jobSummaryList
+  }
+
+  def getJobSummaryLabels : List[String] = {
+    val jobSummaryLabelsEls = driver.findElements(By.xpath(JOB_SUMMARY_LABELS_XPATH)).asScala
+    val jobSummaryLabelsList = jobSummaryLabelsEls.map(_.getText).toList.patch(6, Nil, 1)
+    jobSummaryLabelsList
+  }
+
+  def getWorkerDetails: List[String] = {
+    val workerDetailsEls = driver.findElements(By.xpath(WORKER_DETAILS_XPATH)).asScala
+    val workerDetailsList = workerDetailsEls.map(_.getText).toList
+    workerDetailsList
+  }
+
+  def getWorkerDetailsLabel: List[String] = {
+    val workerDetailsLabelsEls = driver.findElements(By.xpath(WORKER_DETAILS_LABELS_XPATH)).asScala
+    val workerDetailsLabelsList = workerDetailsLabelsEls.map(_.getText).toList
+    workerDetailsLabelsList
+  }
+
+  def getLocationDetails: List[String] = {
+    val locationDetailsEls = driver.findElements(By.xpath(JOB_LOCATION_ID_XPATH)).asScala
+    val locationDetailsList = locationDetailsEls.map(_.getText.replace("\n"," ")).toList
+    locationDetailsList
+  }
+
+  def getLocationDetailsLabels: List[String] = {
+    val locationDetailsLabelsEls = driver.findElements(By.xpath(JOB_LOCATION_LABEL_XPATH)).asScala
+    val locationDetailsLabelsList = locationDetailsLabelsEls.map(_.getText.replace("\n"," ")).toList
+    locationDetailsLabelsList
+  }
+
+  def getScheduledTime: List[String] = {
+    val scheduledTimesEls = driver.findElements(By.xpath(SCHEDULED_TIME_XPATH)).asScala
+    val scheduledTimesList = scheduledTimesEls.map(_.getText).toList
+    scheduledTimesList
+  }
+
+  def getActualTime: List[String] = {
+    val actualTimeEls = driver.findElements(By.xpath(ACTUAL_TIME_XPATH)).asScala
+    val actualTimeList = actualTimeEls.map(_.getText).toList
+    actualTimeList
+  }
+
+  def getScheduledTimeLabels: List[String] = {
+    val scheduledTimesEls = driver.findElements(By.xpath(SCHEDULED_TIME_LABEL_XPATH)).asScala
+    val scheduledTimesList = scheduledTimesEls.map(_.getText).toList
+    scheduledTimesList
+  }
+
+  def getActualTimeLabels: List[String] = {
+    val actualTimeEls = driver.findElements(By.xpath(ACTUAL_TIME_LABEL_XPATH)).asScala
+    val actualTimeList = actualTimeEls.map(_.getText).toList
+    actualTimeList
+  }
+
+  def getSelectedAdditionalInformation: List[String] = {
+    val additionalInformationEls = driver.findElements(By.xpath(ADDITIONAL_INFORMATION_XPATH)).asScala
+    val additionalInformationList = additionalInformationEls.map(_.getText).toList
+    additionalInformationList
+  }
+
+  def getEachSectionHeaderValues: List[String] = {
+    val boxHeaderEls = driver.findElements(By.className("detailsBoxHeaderFont")).asScala
+    val boxHeaderValues = boxHeaderEls.map(_.getText.trim).toList
+    boxHeaderValues
+  }
+
+  def checkAdditionalInformationBlockState(): String = {
+    val additionalInformationImageEl = driver.findElement(By.id(ADDITIONAL_INFO_IMAGE_ID))
+    val additionalInformationImage =  additionalInformationImageEl.getAttribute("class")
+    additionalInformationImage
+  }
+
+  def getJobDescription = {
+    driver.findElement(By.id("Job Description")).getText.trim
+  }
+
+  def getJobAttributeNames = {
+    val attributeNameEls = driver.findElements(By.xpath(ADDITIONAL_INFORMATION_XPATH+"//td[1]")).asScala
+    val attributeNameList = attributeNameEls.map(_.getText.replace(": ","")).toList
+    attributeNameList
+  }
+
+  def getAttributeValues = {
+    val attributeValueEls = driver.findElements(By.xpath(ADDITIONAL_INFORMATION_XPATH+"//td[2]")).asScala
+    val attributeValueList = attributeValueEls.map(_.getText).toList
+    attributeValueList
+  }
+
+  def getSubmittedJobActions: List[Any] = {
+    var mainList: List[Any] = List()
+    val jobActionEls = driver.findElements(By.xpath(JOB_ACTION_XPATH)).asScala
+    for(jobActionEl <- jobActionEls) {
+      var i =1
+      println("i"+ i)
+     var subList: List[Any] = List()
+      val jobActionName = jobActionEl.findElement(By.xpath(JOB_ACTION_XPATH + DETAILS_LABEL_XPATH)).getText
+      subList = subList ::: List(jobActionName)
+      val jobActionDetails = jobActionEl.findElement(By.xpath(JOB_ACTION_XPATH + DETAILS_VALUE_XPATH)).getText.split("\n").toList
+      subList = subList ::: jobActionDetails
+      mainList = mainList ::: List(subList)
+     i = i+1
+    }
+
+    mainList
+  }
+
+  def getJobActionNames : List[String] = {
+    val jobActionNameEls = driver.findElements(By.xpath(JOB_ACTION_XPATH + DETAILS_LABEL_XPATH)).asScala
+     val names = jobActionNameEls.map(_.getText).toList
+    names
+  }
+
+  def getSubmittedJobActionDetails: List[String] = {
+    var  jobActionList :List[String] = List()
+    val jobActionEls = driver.findElements(By.xpath(JOB_ACTION_XPATH + DETAILS_VALUE_XPATH)).asScala
+    for(jobActionEl <- jobActionEls)  {
+      val jobActionDetailsArray = jobActionEl.getText.split("\n")
+      if(jobActionDetailsArray.size.equals(1)){
+        jobActionList = jobActionList ::: List(jobActionDetailsArray(0),"")
+      }
+      else{
+        jobActionList = jobActionList ::: List(jobActionDetailsArray(0),jobActionDetailsArray(1))
+      }
+    }
+    jobActionList
+  }
+
+  def getJobActionData : List[String] =
+  {
+    var jobActionList = List[String]()
+
+    val formDataEls = driver.findElements(By.xpath(FORM_DETAILS_XPATH)).asScala
+    for(formDataEl <- formDataEls) {
+      val formName =  formDataEl.findElement(By.className(DETAILS_LABEL_CLASS)).getText
+      jobActionList = jobActionList ::: List(formName)
+
+      val formDetails = formDataEl.findElement(By.className(DETAILS_VALUE_CLASS)).getText.split("\n").toList
+      if(formDetails.size.equals(1)){
+        jobActionList = jobActionList ::: List("")
+      }
+      else{
+        jobActionList = jobActionList ::: List(formDetails(1))
+      }
+      val fieldNames = formDataEl.findElements(By.className(FIELD_LABEL_CLASS)).asScala
+      val list1 =  fieldNames.map(_.getText.replace(":","").trim).toList
+
+      val fieldValues = formDataEl.findElements(By.className(FIELD_VALUE_CLASS)).asScala
+      val list2 =  fieldValues.map(_.getText.trim).toList
+
+      for(i <- list1.indices ) {
+        jobActionList = jobActionList ::: List(list1(i),list2(i))
+      }
+    }
+    jobActionList
+  }
+
+  def getPartsDetailListFromInvoiceDetailsSection = {
+    val partsList = driver.findElements(By.xpath("//div[@id = 'Invoice details']//table[1]//tr")).asScala.patch(0,Nil,1)
+    var partsDetailsList: List[Any] = List()
+    for(part<- partsList) {
+      val partDetailEls = part.findElements(By.tagName("td")).asScala
+      val partDetailList = partDetailEls.map(_.getText).toList
+      partsDetailsList = partsDetailsList ::: List(partDetailList)
+    }
+    partsDetailsList
+  }
+
+  def getInvoiceDetailsSectionLabelNames = {
+    val labelNames = driver.findElements(By.xpath("//div[@id = '"+INVOICE_SECTION_ID+"']//td[@class = 'fieldLabel']")).asScala
+    val labelNameList = labelNames.map(_.getText).toList
+    labelNameList
+  }
+
+  def getTotalPartsCost = {
+    val totalPartsCost = driver.findElement(By.xpath("//div[@id = '"+INVOICE_SECTION_ID+"']//tr//td[1][text() = 'Parts:']//..//td[2]")).getText
+    totalPartsCost
+  }
+
+  def getTotalLabourCost = {
+    val totalLabourCost = driver.findElement(By.xpath("//div[@id = '"+INVOICE_SECTION_ID+"']//tr//td[1][text() = 'Labor:']//..//td[2]")).getText
+    totalLabourCost
+  }
+
+  def getTaxRate = {
+    val taxRate = driver.findElement(By.xpath("//div[@id = '"+INVOICE_SECTION_ID+"']//tr//td[1][text() = 'Tax:']//..//td[2]")).getText
+    taxRate
+  }
+
+  def getTotalCost = {
+    val totalCost = driver.findElement(By.xpath("//div[@id = '"+INVOICE_SECTION_ID+"']//tr//td[1][text() = 'Total Due:']//..//td[2]")).getText
+    totalCost
+  }
+
+  def getComments = {
+    val comments = driver.findElement(By.xpath("//div[@id = '"+INVOICE_SECTION_ID+"']//tr//td[1][text() = 'Comments:']//..//td[2]")).getText
+     comments
+  }
+
+  def emailJobDetails() = {
+    val emailIcon = driver.findElement(By.xpath("//div[@class = '" + EMAIL_ICON_CLASS + "']//img[@title = 'Email']"))
+    emailIcon.click()
+//    new EmailJobDetailsPopup(driver,this)
+  }
+  def searchJob(searchKey: String) = {
+
+    val searchOption: WebElement = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(SEARCH_OPTION_FIELD_ID)))
+    val searchInputText: WebElement = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(SEARCH_INPUT_TEXT_ID)))
+
+    val searchButton = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(SEARCH_BUTTON_ID)))
+
+    new Select(searchOption).selectByVisibleText(JOB_LIST_TEXT)
+    searchInputText.clear()
+    searchInputText.sendKeys(searchKey)
+    searchButton.click()
+    Thread.sleep(2000)
+    this
+  }
+
+  def getElementsPresentInToolbar = {
+    val toolBarEl = driver.findElement(By.id(TOOL_BAR_ID))
+    val toolBarsListEls = toolBarEl.findElements(By.tagName("tr")).asScala
+    val toolBarValuesList = toolBarsListEls.filter(!_.getText.contains("Date Filter")).filter(_.getText.nonEmpty).map(_.getText.trim).toList.patch(8,Nil,1)
+    toolBarValuesList
+  }
+
+  def clickDeleteJobButtonFromToolBarAndAccept() = {
+    val deleteJobEl = new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.id(DELETE_BUTTON_ID)))
+    deleteJobEl.click()
+    sleepTime((minWaitTime / 4) * 1000)
+    acceptDeleteJobConfirmationDialog()
+    this
+  }
+
+  private def acceptDeleteJobConfirmationDialog() {
+    val confirmDialog = driver.findElement(By.xpath("//div[" + hasCssClass(DIALOG_CONFIRM_CLASS) + "]"))
+    val deleteButton = confirmDialog.findElement(By.xpath("//a[" + hasCssClass(DIALOG_BUTTON_CLASS) + "]//span[text() = '" + "Delete" + "']"))
+    sleepTime((minWaitTime / 2) * 1000)
+    deleteButton.click()
+    sleepTime(minWaitTime * 1000)
+  }
+
+  def clickJobsLink : JobListPage= {
+    val jobLinkEl = driver.findElement(By.cssSelector("div."+SECTION_HEADLINE_CLASS+" a"))
+    jobLinkEl.click()
+    new JobListPage(driver, mcBaseUrl)
+  }
+
+}
+
+object AbstractViewJobDetailPage {
+  val PAGE_HEADLINE_CLASS = "pageHeadlineText"
+  val JOB_SUMMARY_ID = "Job Summary"
+  val JOB_SUMMARY_ID_XPATH = "//div[@id='" + JOB_SUMMARY_ID + "']"
+  val JOB_SUMMARY_LIST_CLASS = "fieldValue"
+  val ACTUAL_TIME_ID = "Actual Time"
+  val WORKER_DETAILS_ID = "Worker Details"
+  val JOB_LOCATION_ID = "Job Location"
+  val SCHEDULED_TIME = "Scheduled Time"
+  val ADDITIONAL_INFORMATION = "Additional Information"
+  val JOB_SUMMARY_XPATH = JOB_SUMMARY_ID_XPATH + "//tr//td[@class='" + JOB_SUMMARY_LIST_CLASS + "']"
+  val WORKER_DETAILS_XPATH = "//div[@id='" + WORKER_DETAILS_ID + "']//tr//td[@class='" + JOB_SUMMARY_LIST_CLASS + "']"
+  val JOB_LOCATION_ID_XPATH = "//div[@id='" + JOB_LOCATION_ID + "']//tr//td[@class='" + JOB_SUMMARY_LIST_CLASS + "']"
+  val SCHEDULED_TIME_XPATH = "//div[@id='" + SCHEDULED_TIME + "']//tr//td[@class='" + JOB_SUMMARY_LIST_CLASS + "']"
+  val ACTUAL_TIME_XPATH = "//div[@id='" + ACTUAL_TIME_ID + "']//tr//td[@class='fieldValue']"
+  val ADDITIONAL_INFORMATION_XPATH = "//div[@id='" + ADDITIONAL_INFORMATION + "']//tr[.//*[@class='jobAttributeValue']]"
+  val JOB_ACTION_XPATH = "//div[@class='jobActionName']"
+  val ADDITIONAL_INFO_IMAGE_ID = "Additional InformationImage"
+  val DETAILS_VALUE_CLASS = "detailsPageValue"
+  val DETAILS_LABEL_CLASS = "detailsPageLabel"
+  val FIELD_LABEL_CLASS = "fieldLabel"
+  val JOB_SUMMARY_LABELS_XPATH = JOB_SUMMARY_ID_XPATH + "//tr//td[@class='" + FIELD_LABEL_CLASS + "']"
+  val WORKER_DETAILS_LABELS_XPATH = "//div[@id='" + WORKER_DETAILS_ID + "']//tr//td[@class='" + FIELD_LABEL_CLASS + "']"
+  val JOB_LOCATION_LABEL_XPATH = "//div[@id='" + JOB_LOCATION_ID + "']//tr//td[@class='" + FIELD_LABEL_CLASS + "']"
+  val SCHEDULED_TIME_LABEL_XPATH = "//div[@id='" + SCHEDULED_TIME + "']//tr//td[@class='" + FIELD_LABEL_CLASS + "']"
+  val ACTUAL_TIME_LABEL_XPATH = "//div[@id='" + ACTUAL_TIME_ID + "']//tr//td[@class='"+FIELD_LABEL_CLASS+"']"
+  val FIELD_VALUE_CLASS = "fieldValue"
+  val FORM_DETAILS_CLASS = "formDetailsBubbleCallout"
+  val FORM_DETAILS_XPATH =  "//div[@class = '"+FORM_DETAILS_CLASS+"']"
+  val DETAILS_VALUE_XPATH = "//span[@class = '"+DETAILS_VALUE_CLASS+"']"
+  val DETAILS_LABEL_XPATH = "//span[@class = '"+DETAILS_LABEL_CLASS+"']"
+  val INVOICE_SECTION_ID = "Invoice details"
+  val EMAIL_ICON_CLASS = "emailPrintDownloadIcons"
+  val TOOL_BAR_ID = "job.detail.toolbar.contentWidget"
+  val SEARCH_OPTION_FIELD_ID = "resourceUrl"
+  val SEARCH_INPUT_TEXT_ID = "searchInput"
+  val SEARCH_BUTTON_ID = "searchButton"
+  val JOB_LIST_TEXT = "Jobs"
+  val DELETE_BUTTON_ID = "jobDelete"
+  val DIALOG_CONFIRM_CLASS = "dialog"
+  val DIALOG_BUTTON_CLASS = "linkButton"
+  val TOOL_BAR_REASSIGN_BUTTON_ID = "jobReassign"
+  val SECTION_HEADLINE_CLASS = "sectionHeadline"
+}

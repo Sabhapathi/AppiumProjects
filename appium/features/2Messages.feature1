@@ -1,0 +1,23 @@
+  Feature: Xora
+  Scenario: Messages:Sync first
+ 
+	  
+	    Then I wait for 3 seconds
+ Scenario: Messages:Msg list    
+    Then I press "2 Messages"
+    Then I press "Msg from MC"
+    Then I see the text "Msg desc from MC"
+	
+Scenario: Messages:Listen Msg    
+    Then I press "Listen"
+    Then I wait for 5 seconds
+	Then I press "Stop"
+    
+           
+Scenario: Messages:Delete Msg    
+    Then I press "Delete"
+    Then I press "No"
+    Then I press Home button
+	Then I wait for 3 seconds
+    
+    

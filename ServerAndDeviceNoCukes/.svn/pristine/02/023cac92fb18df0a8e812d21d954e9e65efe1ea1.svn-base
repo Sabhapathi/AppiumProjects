@@ -1,0 +1,725 @@
+package com.xora.mc.pages.workers
+
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
+import com.xora.mc.pages.workers.WorkerListPage._
+import com.xora.util.Optionally
+import org.openqa.selenium._
+import org.openqa.selenium.support.ui
+import org.openqa.selenium.support.ui.{ExpectedConditions, LoadableComponent, Select, WebDriverWait}
+import xora.mc.util.LoadableElement
+
+import scala.collection.JavaConverters._
+
+
+class WorkerListPage(val driver: WebDriver, val baseUrl: String)
+  extends LoadableComponent[WorkerListPage]
+  with LoadableElement with Optionally {
+
+//  protected var jobListPage: JobListPage = _
+
+  def load() {
+    val url = baseUrl + "/worker/list/doList.page"
+    driver.get(url)
+  }
+
+  def isLoaded() {
+    verifyElementLoaded(driver, By.xpath(PAGE_TITLE_XPATH))
+  }
+
+  def getPageHeader() = {
+    val pageHeaderEl = driver.findElement(By.className(TITLE_CLASS))
+    val pageHeadline = pageHeaderEl.getText.trim
+    pageHeadline
+  }
+
+  private def findWorkerRow(workerName: String) = {
+    val workerRowXpath = WORKER_BASE_XPATH + "//tr[.//*[text()='" + workerName + "']]"
+    val workerRowEl = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.xpath(workerRowXpath)))
+    workerRowEl
+  }
+
+  def workerProfilePicValidation(workerName: String): Boolean = {
+
+  val workerRowEl=findWorkerRow(workerName)
+
+  //if(driver.findElements(By.className(WORKER_PROFILE_PIC_CLASS_NAME)).size() != 0) {
+    val profilePicName = workerRowEl.findElement(By.className(WORKER_PROFILE_PIC_CLASS_NAME)).getAttribute("class")
+    val validateWorkerProfilePic = !profilePicName.equals(WORKER_PROFILE_PIC_CLASS_NAME)
+    validateWorkerProfilePic
+
+  }
+
+  def getWorkerNames= {
+    val workerNamesList=driver.findElements(By.xpath(WORKER_NAME_XPATH)).asScala.map(_.getText).toList
+    workerNamesList
+  }
+
+  def stopTravelStatus(workerName: String): String = {
+    val stopTravelText = getStopTravelText(workerName)
+    val multiple = stopTravelText.split(" ")
+    val stopTravelStatus = multiple(0)
+    stopTravelStatus
+  }
+
+  def stopTravelDuration(workerName: String) = {
+    val stopTravelText = getStopTravelText(workerName)
+    val multiple = stopTravelText.split(" ")
+    val stopTravelTime = multiple(2)
+    stopTravelTime
+  }
+
+  private def getStopTravelText(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val stopTravelText = workerRowEl.findElement(By.className(WORKER_STOP_TRAVEL_CLASS_NAME)).getText
+    stopTravelText
+  }
+
+  def headerNames(): List[String] = {
+    val headerEl = driver.findElement(By.id(WORKER_LIST_HEADER_ID))
+    val headerNameEls = headerEl.findElements(By.tagName("td")).asScala
+    val headerNamesList = headerNameEls.map(_.getText.trim)
+    headerNamesList.toList
+  }
+
+  def sortableHeaderNames(): List[String] = {
+    val headerEl = driver.findElement(By.id(WORKER_LIST_HEADER_ID))
+    val clickAbleEls = headerEl.findElements(By.tagName("a")).asScala
+    val headerNames = clickAbleEls.filter(_.isEnabled).map(_.getText)
+    headerNames.toList
+  }
+
+  def lastCommunicationStatus(workerName: String): String = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val commStatus = lastUpdateEls.get(0).getText.trim
+    commStatus
+  }
+
+  def lastCommunicationToolTipMessage(workerName: String): String = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val commToolTipMsg = lastUpdateEls.get(0).getAttribute("title").trim
+    commToolTipMsg
+  }
+
+  def lastGPSStatus(workerName: String): String = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val gpsStatus = lastUpdateEls.get(1).getText.trim
+    gpsStatus
+  }
+
+  private def getLastUpdate(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val lastUpdateEls = workerRowEl.findElements(By.className("warningMsgs"))
+    lastUpdateEls
+  }
+
+  def lastGpsToolTipMessage(workerName: String): String = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val gpsToolTipMsg = lastUpdateEls.get(1).getAttribute("title").trim
+    gpsToolTipMsg
+  }
+
+  def workerStatusIconColor(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val iconColor: String = workerRowEl.findElement(By.tagName("img")).getAttribute("src")
+    val iconColorArray = iconColor.split("/")
+    val color: String = iconColorArray(iconColorArray.length - 1)
+
+    val carColor = color match {
+      case "truck_yellow.gif" => "Yellow"
+      case "worker.gif" => "Orange"
+      case "WorkerStatus-1.gif" => "Blue"
+      case "WorkerStatus-2.gif" => "Red"
+      case "WorkerStatus-3.gif" => "Green"
+    }
+    carColor
+  }
+
+  def refresh(): WorkerListPage =
+  {
+    driver.findElement(By.className(REFRESH_BUTTON_CLASS)).click()
+    optionally {
+      val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+      new WebDriverWait(driver, 10)
+        .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+    }
+    this
+  }
+
+  def lastGpsColor(workerName: String) = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val gpsStatusOfDeviceEl = lastUpdateEls.get(1)
+    val gpsStatusColor: String = gpsStatusOfDeviceEl.findElement(By.tagName("img")).getAttribute("src")
+    val gpsStatusColorArray = gpsStatusColor.split("/")
+    val color: String = gpsStatusColorArray(gpsStatusColorArray.length - 1)
+
+    val gpsColor: String = color match {
+      case "gps_yellow.png" => "Orange"
+      case "gps_green.png" => "Green"
+      case "gps_grey.png"  => "Grey"
+      case "gps_red.png"   => "Red"
+
+    }
+    gpsColor
+  }
+
+  def lastCommunicationColor(workerName: String) = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val commStatusOfDeviceEl = lastUpdateEls.get(0)
+    val commStatusColor: String = commStatusOfDeviceEl.findElement(By.tagName("img")).getAttribute("src")
+    val commStatusColorArray = commStatusColor.split("/")
+    val color: String = commStatusColorArray(commStatusColorArray.length - 1)
+    val commColor: String = color match {
+      case "dvc_yellow.png" => "Yellow"
+      case "dvc_green.png" => "Green"
+      case "dvc_grey.png" => "Grey"
+    }
+    commColor
+  }
+
+  def batteryStatus(workerName: String) = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val batteryStatus = lastUpdateEls.get(2).getText.trim
+    batteryStatus
+  }
+
+  def batteryStatusColor(workerName: String) = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val batteryStatusEl = lastUpdateEls.get(2)
+    val batteryStatusColor: String = batteryStatusEl.findElement(By.tagName("img")).getAttribute("src")
+    val batteryStatusColorArray = batteryStatusColor.split("/")
+    val color: String = batteryStatusColorArray(batteryStatusColorArray.length - 1)
+    val batteryColor: String = color match {
+      case "battery_critical.png" => "Red"
+      case "battery_na.png" => "Grey"
+      case "battery_well.png" => "Green"
+      case "battery_good.png" => "Green"
+      case  "battery_low.png" => "Orange"
+    }
+    batteryColor
+  }
+
+  def batteryStatusMessage(workerName: String) = {
+    val lastUpdateEls = getLastUpdate(workerName)
+    val batteryStatusMessage = lastUpdateEls.get(2).getAttribute("title").trim
+    batteryStatusMessage
+  }
+
+  def contextMenu(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    workerRowEl.click()
+    new WorkerListPageContextMenuPopup(driver, this)
+  }
+
+  def statusOfWorker(workerName: String): String = {
+    val workerRowEl = findWorkerRow(workerName)
+    val statusText = workerRowEl.findElement(By.className(WORKER_CLASS_NAME)).getText
+    var status: String = ""
+    if (statusText.contains("(")) {
+      val statusArray = statusText.split(" ")
+      for (i <- 0 until statusArray.size - 1) {
+        status = status + " " + statusArray(i)
+      }
+    }
+    else {
+      status = statusText.trim
+    }
+    status.trim
+  }
+
+
+  def jobNameOfWorker(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val jobName = workerRowEl.findElement(By.className(JOB_LINK_CLASS_NAME)).getText
+    jobName.trim
+  }
+
+//  def clickOnJobLink(workerName: String):ViewJobDetailPage = {
+//    val workerRowEl = findWorkerRow(workerName)
+//    val jobName = workerRowEl.findElement(By.className(JOB_LINK_CLASS_NAME))
+//     jobName.findElement(By.partialLinkText("Autojobid")).click()
+//    new ViewJobDetailPage(driver,jobListPage)
+//  }
+
+  def jobActivityOfWorker(workerName: String): String = {
+    val workerRowEl = findWorkerRow(workerName)
+    val action = workerRowEl.findElement(By.className("jobActivity")).getText
+    action
+  }
+
+  def lastUpdateDateOfWorker(workerName: String) = {
+    val lastUpdateArr = lastUpdate(workerName)
+    val lastUpdateDate = lastUpdateArr(1)
+    lastUpdateDate
+  }
+
+  private def lastUpdate(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val lastUpdateText = workerRowEl.findElement(By.className(LAST_UPDATE_DATE_TIME_CLASS)).getText
+    val lastUpdateArr = lastUpdateText.split(",")
+    lastUpdateArr
+  }
+
+  def lastUpdateTimeOfWorker(workerName: String): String = {
+    val lastUpdateArr = lastUpdate(workerName)
+    val lastUpdateTime = lastUpdateArr(0)
+    lastUpdateTime
+  }
+
+  def currentSortedColumn(): String = {
+    var sortedColumnName = ""
+    val headerEl = driver.findElement(By.id(WORKER_LIST_HEADER_ID))
+    val columnsEls = headerEl.findElements(By.tagName("td")).asScala
+    for (web1 <- columnsEls) {
+      if (web1.getAttribute(INNER_HTML).indexOf("<img ") > 0) {
+        val innerHtmlText = web1.getAttribute(INNER_HTML)
+        val innerHtmlArray = innerHtmlText.split("</a>")
+        val len = innerHtmlArray.length
+        for (i <- 0 until len) {
+          if (innerHtmlArray(i).indexOf(".gif") > 0) {
+            val columnsArray = innerHtmlArray(i - 1).split(">")
+            sortedColumnName = columnsArray(columnsArray.length - 1)
+          }
+        }
+
+      }
+    }
+    sortedColumnName
+  }
+
+  def sortedOrder(): String = {
+    var order = ""
+    val headerEl = driver.findElement(By.id(WORKER_LIST_HEADER_ID))
+    val columnsEls = headerEl.findElements(By.tagName("td")).asScala
+    for (web1 <- columnsEls) {
+      if (web1.getAttribute(INNER_HTML).indexOf("<img ") > 0) {
+        val innerHtmlText = web1.getAttribute(INNER_HTML)
+        if (innerHtmlText.contains("sortArrowUp.gif")) {
+          order = "descending"
+        }
+        else
+          order = "ascending"
+      }
+    }
+    order
+  }
+
+  def stopTravelTimeOfWorker(workerName: String): String = {
+    val dateTimeArr = stopTravel(workerName)
+    val time: String = dateTimeArr(0)
+    time
+  }
+
+  private def stopTravel(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val stopTravelEls = workerRowEl.findElements(By.className("address"))
+    val dateTimeEl: WebElement = stopTravelEls.get(stopTravelEls.size()-1)
+    val dateTimeText: String = dateTimeEl.getText
+    val dateTimeArr = dateTimeText.split(",")
+    dateTimeArr
+  }
+
+
+  def stopTravelDateOfWorker(workerName: String): String = {
+    val dateTimeArr = stopTravel(workerName)
+    val date: String = dateTimeArr(1)
+    date
+  }
+
+
+  def workerGroupName(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val groupName = workerRowEl.findElement(By.className("workerGroupName")).getText
+    groupName
+  }
+
+  def workerDisplayName(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val name = workerRowEl.findElement(By.className("workerName")).getText
+    name
+  }
+
+  def stopLocationName(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val location = workerRowEl.findElement(By.className("tripLocation")).getText
+    location
+  }
+
+  def stopTravelAddress(workerName: String) = {
+    val workerRowEl = findWorkerRow(workerName)
+    val stopTravel = workerRowEl.findElements(By.className("address"))
+    val address1El = stopTravel.get(0)
+    val address1 = address1El.getText
+    val address2El = stopTravel.get(1)
+    val address2 = address2El.getText
+    val address = address1.concat(address2)
+    address
+  }
+
+  def sort(headerName: String, order: String): WorkerListPage = {
+
+    val sortWorker = driver.findElement(By.xpath(WORKER_COMMON_XPATH + "//tr"))
+
+    sortWorker.findElement(By.linkText(headerName)).click()
+
+    Thread.sleep(5000)
+    val sortWorker1 = driver.findElement(By.xpath(WORKER_COMMON_XPATH + "//tr"))
+    val element = sortWorker1.findElement(By.tagName("img")).getAttribute("src")
+    if (order.equals("ascending")) {
+      if (element.contains("sortArrowUp.gif")) {
+        val sortWorker2 = driver.findElement(By.xpath(WORKER_COMMON_XPATH + "//tr"))
+        sortWorker2.findElement(By.linkText(headerName)).click()
+        Thread.sleep(2000)
+      }
+    } else {
+      if (element.contains("sortArrowDown.gif")) {
+        val sortWorker3 = driver.findElement(By.xpath(WORKER_COMMON_XPATH + "//tr"))
+        sortWorker3.findElement(By.linkText(headerName)).click()
+        Thread.sleep(2000)
+      }
+    }
+    this
+  }
+
+  def getSortedDataOfColumn(headerName: String, order: String): List[String] = {
+
+    sort(headerName, order)
+
+
+    val result = headerName match {
+      case "Worker Name" => driver.findElements(By.xpath(WORKER_NAME_XPATH)).asScala.map(_.getText)
+      case "Group" => driver.findElements(By.xpath(WORKER_GROUP_XPATH)).asScala.map(_.getText)
+      case "Worker Status" => {
+        val list = driver.findElements(By.xpath(WORKER_STATUS_XPATH)).asScala.map(_.getText).toList
+        val sizeOfList = list.size
+        var workerStatusList = List[String]()
+        for (i <- 0 until sizeOfList)
+        {
+          val list1 = list(i).trim.split(" ")
+          val size0fList1 = list1.length
+          if (list1(size0fList1 - 1).contains("("))
+          {
+            workerStatusList = workerStatusList ::: List(list(i).replace(list1(size0fList1 - 1), "").trim)
+          }
+          else
+          {
+            workerStatusList = workerStatusList ::: List(list(i).trim)
+          }
+        }
+        workerStatusList
+      }
+
+      case "Stop-Travel" => {
+        val list = driver.findElements(By.xpath(WORKER_TRAVEL_XPATH)).asScala.map(_.getText)
+        val sizeOfList=list.size
+        var workerStatusList=List[String]()
+        for(i<-0 until sizeOfList)
+        {
+          val list1=list(i).trim.split(" ")
+          val size0fList1 = list1.length
+          if(list1(size0fList1-1).contains("(")) {
+            workerStatusList = workerStatusList ::: List(list(i).replace(list1(size0fList1-1),"").trim)
+          }
+          else{
+            workerStatusList = workerStatusList :::  List(list(i).trim)
+          }
+        }
+        workerStatusList
+      }
+
+       case "Last Update" => driver.findElements(By.xpath(WORKER_UPDATE_XPATH)).asScala.map(_.getText)
+    }
+    result.toList
+  }
+
+  def getDataOfColumnOfWorkerListPage(headerName: String) = {
+    val result = headerName match {
+      case "Worker Name" => {
+        optionally {
+          val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+          new WebDriverWait(driver, 10)
+            .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+        }
+        driver.findElements(By.xpath(WORKER_NAME_XPATH)).asScala.map(_.getText)
+      }
+
+      case "Group" => {
+        optionally {
+          val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+          new WebDriverWait(driver, 10)
+            .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+
+        }
+        driver.findElements(By.xpath(WORKER_GROUP_XPATH)).asScala.map(_.getText)
+      }
+
+      case "Worker Status" => {
+        optionally {
+          val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+          new WebDriverWait(driver, 10)
+            .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+        }
+        val list = driver.findElements(By.xpath(WORKER_STATUS_XPATH)).asScala.map(_.getText).toList
+        val sizeOfList = list.size
+        var workerStatusList = List[String]()
+        for (i <- 0 until sizeOfList) {
+          val list1 = list(i).trim.split(" ")
+          val size0fList1 = list1.length
+          if (list1(size0fList1 - 1).contains("(")) {
+            workerStatusList = workerStatusList ::: List(list(i).replace(list1(size0fList1 - 1), "").trim)
+          }
+          else {
+            workerStatusList = workerStatusList ::: List(list(i).trim)
+          }
+        }
+        workerStatusList
+      }
+
+      case "Stop-Travel" => {
+        optionally {
+          val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+          new WebDriverWait(driver, 10)
+            .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+        }
+        val list = driver.findElements(By.xpath(WORKER_TRAVEL_XPATH)).asScala.map(_.getText)
+        val sizeOfList = list.size
+        var workerStatusList = List[String]()
+        for (i <- 0 until sizeOfList) {
+          val list1 = list(i).trim.split(" ")
+          val size0fList1 = list1.length
+          if (list1(size0fList1 - 1).contains("(")) {
+            workerStatusList = workerStatusList ::: List(list(i).replace(list1(size0fList1 - 1), "").trim)
+          }
+          else {
+            workerStatusList = workerStatusList ::: List(list(i).trim)
+          }
+        }
+        workerStatusList
+      }
+
+      case "Last Update" => {
+        optionally {
+          val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+          new WebDriverWait(driver, 10)
+            .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+        }
+        driver.findElements(By.xpath(WORKER_UPDATE_XPATH)).asScala.map(_.getText.trim)
+      }
+    }
+    var resultList = result.toList
+
+    if(resultList.isEmpty){
+      resultList = List("Empty")
+    }
+    resultList
+  }
+
+//  def clickOnAvailabilityCalenderFromToolbar = {
+//    val availabilityCalenderButtonEl = driver.findElement(By.id(AVAILABILITY_CALENDER_ID))
+//    availabilityCalenderButtonEl.click()
+//    new AvailabilityCalendarPage(driver, this)
+//  }
+//
+//  def displayFilter()={
+//    val displayFilterEl = new WebDriverWait(driver, 10)
+//      .until(ExpectedConditions.elementToBeClickable(By.id(DISPLAY_FILTER_ID)))
+//    displayFilterEl.click()
+//    new DisplayFilterPage(driver)
+//  }
+//
+//  def groupFilter = {
+//    val groupFilterButtonEl = driver.findElement(By.cssSelector("a#groupFilter"))
+//    groupFilterButtonEl.click()
+//    new GroupFilterPopup(driver)
+//  }
+
+//  def clickGetCurrentLocationButtonInToolBar: GetWorkersCurrentLocationPopup = {
+//    val getCurrentLocationEl = new WebDriverWait(driver, 10)
+//    .until(ExpectedConditions.elementToBeClickable(By.cssSelector("a#pingWorkers")))
+//    getCurrentLocationEl.click()
+//    new GetWorkersCurrentLocationPopup(driver, this)
+//  }
+
+//  def getCurrentUTCTime: String= {
+//    val today = Calendar.getInstance().getTime
+//    val utcFormat = Dates.convertTimeZone(today, Calendar.getInstance().getTimeZone, Dates.UTC_TIME_ZONE)
+//    val UTCFormat = new SimpleDateFormat("dd-MMM-yy HH.mm.ss a")
+//    val time = UTCFormat.format(utcFormat)
+//    time
+//  }
+
+  def getElementsPresentInToolbar() = {
+    val toolBarEl = driver.findElement(By.id(TOOL_BAR_ID))
+    val toolBarsListEls = toolBarEl.findElements(By.tagName("tr")).asScala
+    val toolBarValuesList = toolBarsListEls.filter(_.getText.nonEmpty).map(_.getText.trim).toList
+    toolBarValuesList
+  }
+
+  def validateExpandToolBar() = {
+    var flag = false
+    val toolBarEl = driver.findElement(By.id(TOOL_BAR_EXPAND_OR_COLLAPSE_IMAGE_ID))
+    if(toolBarEl.getAttribute("src").contains(EXPAND_IMAGE)){
+      toolBarEl.click()
+    }
+    if(toolBarEl.getAttribute("src").contains(COLLAPSE_IMAGE)){
+      flag = true
+    }
+    flag
+  }
+
+  def validateCollapseToolBar() = {
+    var flag = false
+    val toolBarEl = driver.findElement(By.id(TOOL_BAR_EXPAND_OR_COLLAPSE_IMAGE_ID))
+    if(toolBarEl.getAttribute("src").contains(COLLAPSE_IMAGE)){
+      toolBarEl.click()
+    }
+    if(toolBarEl.getAttribute("src").contains(EXPAND_IMAGE)){
+      flag = true
+    }
+    flag
+  }
+
+  def validateExpandSearchBox() = {
+    var flag = false
+    val toolBarEl = driver.findElement(By.id(SEARCH_BOX_EXPAND_OR_COLLAPSE_IMAGE_ID))
+    if(toolBarEl.getAttribute("src").contains(EXPAND_IMAGE)){
+      toolBarEl.click()
+    }
+    if(toolBarEl.getAttribute("src").contains(COLLAPSE_IMAGE)){
+      flag = true
+    }
+    flag
+  }
+
+  def validateCollapseSearchBox() = {
+    var flag = false
+    val toolBarEl = driver.findElement(By.id(SEARCH_BOX_EXPAND_OR_COLLAPSE_IMAGE_ID))
+    if(toolBarEl.getAttribute("src").contains(COLLAPSE_IMAGE)){
+      toolBarEl.click()
+    }
+    if(toolBarEl.getAttribute("src").contains(EXPAND_IMAGE)){
+      flag = true
+    }
+    flag
+  }
+
+//  def searchJob(searchKey: String) = {
+//    enterSearchKeyAndKeywordType(searchKey,"Jobs")
+//    new JobListPage(driver,baseUrl)
+//  }
+//
+//  def searchWorker(searchKey: String) = {
+//    enterSearchKeyAndKeywordType(searchKey,"Workers")
+//    new WorkerListPage(driver,baseUrl)
+//  }
+//
+//  def searchLocation(searchKey: String) = {
+//    enterSearchKeyAndKeywordType(searchKey,"Locations")
+//    new LocationListPage(driver,baseUrl)
+//  }
+//
+//  def searchUser(searchKey: String) = {
+//    enterSearchKeyAndKeywordType(searchKey,"Users")
+//    new UserListPage(driver,baseUrl)
+//  }
+
+  // keywordType can be "Jobs", "Workers", "Locations", "Users"
+  private def enterSearchKeyAndKeywordType(searchKey: String, keywordType: String){
+    val searchOption: WebElement = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(SEARCH_OPTION_FIELD_ID)))
+    val searchInputText: WebElement = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(SEARCH_INPUT_TEXT_ID)))
+
+    val searchButton = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(SEARCH_BUTTON_ID)))
+
+    new Select(searchOption).selectByVisibleText(keywordType)
+    searchInputText.clear()
+    searchInputText.sendKeys(searchKey)
+    searchButton.click()
+    Thread.sleep(2000)
+  }
+
+  def validateRefreshButtonIsClickable() = {
+    var flag = false
+    val refreshButton = new WebDriverWait(driver, 10).until(ExpectedConditions.elementToBeClickable(By.className(REFRESH_BUTTON_CLASS)))
+    if(refreshButton.isDisplayed) {
+      flag = true
+    }
+    flag
+  }
+
+  def validateDownloadExcelSymbolPresent()= {
+    var flag = false
+    val excelDownloadIcon = driver.findElement(By.id(DOWNLOAD_LIST_ID))
+    if(excelDownloadIcon.isDisplayed) {
+      flag = true
+    }
+    flag
+  }
+}
+
+
+object WorkerListPage {
+  val PAGE_TITLE = "Workers"
+  val TITLE_CLASS = "pageHeadlineText"
+  val PAGE_TITLE_XPATH = "//*[@class='" + TITLE_CLASS + "' and .//text()='" + PAGE_TITLE + "']"
+
+  val LAST_NAME_COLUMN_TEXT = "Last Name"
+  val TABLE_ID = "workerListHTMLNode"
+  val WORKER_BASE_XPATH = "//div[@id='" + TABLE_ID + "']"
+
+
+  val SEARCH_OPTION_FIELD_ID = "resourceUrl"
+  val SEARCH_BUTTON_ID = "searchButton"
+  val SEARCH_INPUT_TEXT_ID = "searchInput"
+
+  val WORKER_PROFILE_PIC_CLASS_NAME="workerProfilePic"
+  val WORKER_CLASS_NAME = "workerStatusText"
+  val WORKER_STOP_TRAVEL_CLASS_NAME = "tripActivity"
+  val WORKER_NAME_CLASS_NAME = "workerName"
+  val WORKER_GROUP_CLASS_NAME = "workerGroupName"
+  val WORKER_STATUS_CLASS_NAME = "workerStatusDiv"
+  val WORKER_UPDATE_CLASS_NAME = "dvcCommDateTime"
+  val WORKER_LIST_TEXT = "Workers"
+  val WORKER_LIST_HEADER_ID = "workerListHeaderNode"
+  val TABLE_HEADER_ID = "workerListHeaderTable"
+  val STOP_TRAVEL_TIME_CLASS = "address"
+  val LAST_UPDATE_DATE_TIME_CLASS = "dvcCommDateTime"
+  val LAST_UPDATE_NOTIFICATION_CLASS = "warningMsgs"
+  val TABLE_BASE_XPATH = "//table[@id='" + TABLE_ID + "']"
+  val TABLE_BASE_XPATH2 = "//table[@id='" + TABLE_HEADER_ID + "']"
+  val WORKER_BASE_XPATH2 = "//div[@id='" + WORKER_LIST_HEADER_ID + "']"
+  val WORKER_NAME_XPATH = "//div[@class='" + WORKER_NAME_CLASS_NAME + "']"
+  val WORKER_GROUP_XPATH = "//div[@class='" + WORKER_GROUP_CLASS_NAME + "']"
+  val WORKER_STATUS_XPATH = "//div[@class='" + WORKER_STATUS_CLASS_NAME + "']"
+  val WORKER_TRAVEL_XPATH = "//div[@class='" + WORKER_STOP_TRAVEL_CLASS_NAME + "']"
+  val WORKER_UPDATE_XPATH = "//div[@class='" + LAST_UPDATE_NOTIFICATION_CLASS + "']"
+
+  val REPORTS_MENU_BASE_PATH = "//div[@id='workerReports_menu']"
+  val WORKER_COMMON_XPATH = WORKER_BASE_XPATH2 + TABLE_BASE_XPATH2
+  val INNER_HTML = "innerHTML"
+  val REFRESH_BUTTON_CLASS = "refreshNowButton"
+  val BUSY_MSG_CLASS = "busyMsg"
+  val AVAILABILITY_CALENDER_ID = "workersAvailabiltiyCalendar"
+  val DISPLAY_FILTER_ID = "displayFilter"
+  val JOB_LINK_CLASS_NAME = "jobName"
+  val DOWNLOAD_LIST_ID = "downloadList"
+
+  val TOOL_BAR_ID = "workers.list.toolbar.contentWidget"
+  val TOOL_BAR_EXPAND_OR_COLLAPSE_IMAGE_ID = "workers.list.toolbar.contentWidgetImage"
+  val SEARCH_BOX_EXPAND_OR_COLLAPSE_IMAGE_ID = "search.contentWidgetImage"
+  val COLLAPSE_IMAGE = "widget_Collapse.gif"
+  val EXPAND_IMAGE = "widget_Expand.gif"
+
+}
+
+
+
+
+
+
+
+

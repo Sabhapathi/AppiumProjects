@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="0" name="Failed suite [Automation Test Suite]">
+  <listeners>
+    <listener class-name="org.uncommons.reportng.HTMLReporter"/>
+  </listeners>
+  <test name="TimesheetSanityTest(failed)">
+    <classes>
+      <class name="com.xora.test.admin.TimeSheetsSanityTest">
+        <methods>
+          <include name="createAndStartService"/>
+          <include name="loginTodevice"/>
+          <include name="timeSheetsSanitytest"/>
+          <include name="configureSessionForDevice"/>
+          <include name="login"/>
+        </methods>
+      </class> <!-- com.xora.test.admin.TimeSheetsSanityTest -->
+    </classes>
+  </test> <!-- TimesheetSanityTest(failed) -->
+</suite> <!-- Failed suite [Automation Test Suite] -->

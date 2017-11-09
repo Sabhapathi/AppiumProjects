@@ -1,0 +1,25 @@
+  Feature: Xora
+  Scenario: Locations:Sync first
+  
+        Then I press Home button
+	   # Then I press Sync button
+		 Then I wait for 2 seconds 
+		#Then I press GPS button
+        #Then I wait for 2 seconds  
+Scenario: Locations:Location List    
+
+    Then I press "5 Locations"
+	  Then I wait for 5 seconds
+    Then I see the text "Locations"
+    Then I see the text "Location from MC"
+    Then I press "Location from MC"
+             
+Scenario: Messages:Delete Msg    
+    Then I press "Delete"
+    Then I press "No"
+	Then I wait for 2 seconds 
+    Then I press Home button
+    Then I wait for 5 seconds
+       
+        
+    

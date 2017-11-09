@@ -1,0 +1,8 @@
+Feature: Xora
+
+   
+ Scenario: Exit   
+    Then I press "Exit"
+    Then I press "Yes"
+    Then I wait for 120 seconds	    
+    

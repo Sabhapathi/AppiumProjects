@@ -1,0 +1,21 @@
+package com.xora.test
+
+import xora.mc.pages.{LoginPage, SecuredPage}
+import com.xora.test.SeleniumBaseTest
+import org.testng.annotations.BeforeTest
+
+/**
+ * Created by Nandini.Sullekal on 5/2/2016.
+ */
+class SeleniumPostLoginTest extends SeleniumBaseTest {
+
+protected var loginPage: LoginPage = _
+protected var securedPage: SecuredPage = _
+
+@BeforeTest
+def login() {
+loginPage = new LoginPage(webDriver, baseUrl).get
+securedPage = loginPage.login(mcUserName, mcPassword, companyId)
+}
+
+}

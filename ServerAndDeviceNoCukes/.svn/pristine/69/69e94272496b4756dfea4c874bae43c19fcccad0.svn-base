@@ -1,0 +1,468 @@
+package com.xora.pageObjects;
+
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidKeyCode;
+import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Created by Nandini.Sullekal on 4/29/2016.
+ */
+public class MobilePage extends BasePage{
+
+
+    By activatedevice = By.name("Activate Device");
+    By activate_Button = By.name("Activate");
+    By text_edit = By.name("Please confirm your phone number");
+    By locator_text = By.name("Ok");
+
+Date date=new Date();
+
+
+    public MobilePage(AndroidDriver driver) {
+        super(driver);
+    }
+/*
+
+    public String is_on_home_page() {
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        return driver.findElement(By.name("ActivateDevice")).getText();
+    }
+*/
+
+    public void waitForLoginScreen() {
+        waitForVisibilityOf(activatedevice);
+        waitForClickabilityOf(activate_Button);
+    }
+
+    public void waitForOkButton() {
+        waitForVisibilityOf(locator_text);
+    }
+//
+//    public void verifyText(String text){
+////        waitForVisibilityOf(visible_text);
+////        String textfound = driver.findElement(visible_text).getText();
+////        text.contentEquals(driver.findElement(visible_text).getText());
+//        driver.
+//    }
+
+    public void validateLogOptions(){
+        List<String> expLogOptions=new ArrayList<String>();
+
+        List<WebElement> getLogOptions= driver.findElements(By.className("android.widget.CheckedTextView"));
+        for (WebElement logOption : getLogOptions) {
+            expLogOptions.add(logOption.getText());
+        }
+        List<String> actLogOptions = Arrays.asList("TRACE", "DEBUG", "INFO", "WARN", "ERROR");
+      Assert.assertTrue(actLogOptions.containsAll(expLogOptions));
+    }
+    public void clickonbackButton() {
+
+        driver.sendKeyEvent(AndroidKeyCode.BACK);
+    }
+    public boolean verifyTextDisplayed(String visibleText) throws Throwable {
+        return driver.findElement(By.name(visibleText)).isDisplayed();
+    }
+
+    public String getValue(int index) throws Throwable {
+        String txt = driver.findElement(By.xpath("//android.widget.TextView[@index = '" + index + "']")).getText();
+        return txt;
+    }
+
+    public void click_button(String buttonName) throws Throwable {
+        driver.findElement(By.name(buttonName)).click();
+    }
+
+    public void invalidLogin(String phoneNum) {
+        waitForVisibilityOf(text_edit);
+        driver.findElement(text_edit).sendKeys(phoneNum);
+        driver.findElement(activate_Button).click();
+    }
+
+    public void validLogin(String phoneNum) {
+        waitForVisibilityOf(text_edit);
+        driver.findElement(text_edit).sendKeys(phoneNum);
+    }
+
+
+    public void enter_jobname(String text) {
+        driver.findElementsByClassName("android.widget.EditText").get(0).sendKeys(text);
+//        WebElement txt = driver.findElement(By.xpath("//android.widget.EditText[@index='1']"));
+//        txt.click();
+//        txt.sendKeys(text);
+
+    }
+
+    public void enter_jobid(String text) {
+
+        driver.findElementsByClassName("android.widget.EditText").get(1).sendKeys(text);
+//        WebElement txt = driver.findElement(By.xpath("//android.widget.EditText[@index='2']"));
+//        txt.click();
+//        txt.sendKeys(text);
+
+    }
+
+
+
+    public void changeURL(String url) {
+        WebElement urlTextBox = driver.findElementByClassName("android.widget.EditText");
+        urlTextBox.click();
+        urlTextBox.clear();
+        urlTextBox.sendKeys(url);
+    }
+
+    public void verifyAndClickOnNwUpdatesPopup(String pop_up, String buton) throws Throwable {
+        new WebDriverWait(driver, 240).until(ExpectedConditions.presenceOfElementLocated(By.name(pop_up)));
+        click_button(buton);
+    }
+
+    public void touchFeatureIcon(String argument) {
+        List<WebElement> feats = driver.findElements(By.className("android.widget.TextView"));
+        for (WebElement feat: feats) {
+            System.out.println("Feature"+ feat.getText()+"Size"+feats.size()+"Condition"+ feat.getText().contains(argument));
+            if (feat.getText().contains(argument)) {
+                feat.click();
+                break;
+            }
+        }
+    }
+
+    public void tapOn(String name) {
+        driver.findElement(By.name(name)).click();
+    }
+
+    // Top Bar Buttons Method
+    public void touchImageButton(int img_btn) {
+        List<WebElement> imgNo = driver.findElementsByClassName("android.widget.ImageButton");
+        imgNo.get(img_btn).click();
+    }
+
+    //    Ad hoc Forms Step Definitions -Starts Here
+    public void openForm(String form_arg) {
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.findElement(By.name(form_arg)).click();
+    }
+
+    public void selectItems(String option) {
+        driver.findElementByClassName("android.widget.Spinner").click();
+        driver.findElement(By.name(option)).click();
+    }
+
+    public void selectPics(){
+        List<WebElement> pix=driver.findElements(By.className("android.widget.ImageView"));
+        pix.get(0).click();
+        pix.get(1).click();
+        pix.get(2).click();
+        pix.get(3).click();
+        driver.findElement(By.name("OK")).click();
+        driver.findElement(By.name("Ok")).click();
+    }
+
+    public void selectPic(){
+        List<WebElement> pix=driver.findElements(By.className("android.widget.ImageView"));
+        pix.get(0).click();
+        driver.findElement(By.name("OK")).click();
+
+    }
+
+    public void capturePic(){
+        driver.findElement(By.id("com.xora.sprint:id/capture_button")).click();
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        driver.findElement(By.name("Use Photo")).click();
+        driver.findElement(By.name("Ok")).click();
+    }
+
+
+    public void startTrip_camera(){
+        driver.findElement(By.id("com.xora.sprint:id/mileage_starttrip_startOdometerPic")).click();
+    }
+
+    public void endTrip_camera(){
+        driver.findElement(By.id("com.xora.sprint:id/mileage_endtrip_endOdometerPic")).click();
+    }
+
+
+    public void selectCategory(String option){
+        driver.findElement(By.xpath("//android.widget.Spinner[@index ='1']")).click();
+        driver.findElement(By.name(option)).click();
+    }
+
+    public void selectCategoryItem(String option){
+        driver.findElement(By.xpath("//android.widget.Spinner[@index ='2']")).click();
+        driver.findElement(By.name(option)).click();
+    }
+
+    public void multiItems() {
+        driver.scrollTo("No option selected.").click();
+        List<WebElement> ele = driver.findElementsByClassName("android.widget.CheckedTextView");
+        ele.get(0).click();
+        ele.get(2).click();
+        ele.get(1).click();
+    }
+
+    public void inputText(String data1) {
+        WebElement txt = driver.findElement(By.xpath("//android.widget.EditText[@index='1']"));
+        txt.click();
+        txt.sendKeys(data1);
+
+    }
+
+    public void inputText1(String data2) {
+        WebElement num = driver.findElement(By.xpath("//android.widget.EditText[@index='3']"));
+        num.click();
+        num.sendKeys(data2);
+    }
+
+    public void inputText2(String data3) {
+        WebElement odo = driver.findElement(By.xpath("//android.widget.EditText[@index='5']"));
+//                By.name("Odometer:"));
+        odo.click();
+        odo.sendKeys(data3);
+        driver.hideKeyboard();
+    }
+
+    public void inputText3(String data4) {
+        WebElement mny = driver.findElement(By.xpath("//android.widget.EditText[@index='7']"));
+//                By.name("Money:"));
+        mny.click();
+        mny.sendKeys(data4);
+        driver.hideKeyboard();
+    }
+
+    public void inputText4(String data5) {
+        WebElement num2 = driver.findElement(By.xpath("//android.widget.EditText[@index='9']"));
+//        MobileElement num_2 = driver.scrollToExact("Number_2");
+        num2.click();
+        num2.sendKeys(data5);
+        driver.hideKeyboard();
+    }
+
+    public void openPage() {
+        List<WebElement> ele1 = driver.findElementsByClassName("android.widget.TextView");
+        ele1.get(2).click();
+    }
+
+
+    public void doSign() {
+        driver.swipe(500, 800, 1080, 800, 400);
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        driver.swipe(450, 540, 600, 1080, 400);
+//        %x(adb shell input swipe 450 540 600 1080 300)- swipe Middle
+//          %x(adb shell input swipe 600 800 0 800 400) -swipe left
+//         %x(adb shell input swipe 500 800 1080 800 400)- swipe right
+
+    }
+
+    public void changeTime() {
+        driver.findElement(By.name("11:45 p.m.")).click();
+        List<WebElement> feat = driver.findElements(By.className("android.widget.ImageButton"));
+        feat.get(0).click();
+        feat.get(1).click();
+        feat.get(2).click();
+        feat.get(3).click();
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        driver.findElementByName("OK").click();
+    }
+
+    public void changeDate() {
+        driver.findElement(By.name("01/05/2017")).click();
+        List<WebElement> feat = driver.findElements(By.className("android.widget.ImageButton"));
+        feat.get(0).click();
+        feat.get(1).click();
+        feat.get(2).click();
+        feat.get(3).click();
+        feat.get(4).click();
+        feat.get(5).click();
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+//        driver.findElement(By.className("android.widget.Button")).click();
+        driver.findElementByName("OK").click();
+    }
+
+    public void shootEmail(String mail) {
+        WebElement ele = driver.findElement(By.className("android.widget.MultiAutoCompleteTextView"));
+        ele.click();
+        ele.sendKeys(mail);
+    }
+
+
+
+
+//    Ad hoc Forms Step Definitions Ends Here
+
+// ********************************SETTINGS PAGE-----------------------
+
+    By enterCodePopup = By.name("Enter Code");
+    By enterCodeEditbox = By.className("android.widget.EditText");
+
+
+
+
+    public void validateDeviceSettingsOptions() throws ParseException {
+        List<String> expSettings = new ArrayList<String>();
+        List<WebElement> settingsOptions = driver.findElements(By.className("android.widget.TextView"));
+
+        for (WebElement settingsOption : settingsOptions) {
+            expSettings.add(settingsOption.getText());
+        }
+        expSettings.remove(1);  //removing date from list, since its not constant.
+        List<String> actSettingsOptions = Arrays.asList("Options", "Device Summary", "Send Current Location", "Send Log to Server", "Notifications", "Advanced Options");
+        Assert.assertTrue(actSettingsOptions.containsAll(expSettings));
+    }
+
+    public void validateDeviceSummaryPageOptions() throws Throwable {
+        List<String> expDeviceSummaryList=new ArrayList<String>();
+        List<WebElement> deviceSummaryItems = driver.findElements(By.className("android.widget.TextView"));
+        for (WebElement item : deviceSummaryItems) {
+            String deviceOption = item.getText();
+            String[] name = deviceOption.split(":");
+            if (name.length > 0) {
+                expDeviceSummaryList.add(name[0]);
+            }
+        }
+        expDeviceSummaryList.remove(1);  //removing date from list, since its not constant.
+        List<String> actDeviceSummaryList = Arrays.asList("Device Summary", "User ID", "Device ID", "Company ID", "Company Name",
+                "User Preferred Name", "User Name", "Version #","Server URL", "Device Type ID", "GCM Status",
+                "IP address", "GPS Service Status", "GPS Poll Rate");
+        Assert.assertTrue(actDeviceSummaryList.containsAll(expDeviceSummaryList));
+
+    }
+
+    public void selectstartshiftTimePicker(String shift) throws InterruptedException {
+    List<WebElement> alltext = driver.findElements(By.className("android.widget.Button"));
+
+    if (shift.contains("Start Shift")) {
+        alltext.get(0).click();
+    }
+    }
+
+    public void change_interval_time() throws InterruptedException {
+        List<WebElement> datefields = driver.findElements(By.className("android.widget.ImageButton"));
+        Thread.sleep(3000);
+        datefields.get(0).click();
+        datefields.get(1).click();
+        datefields.get(2).click();
+        datefields.get(3).click();
+    }
+
+    public void validateAdvancedSettingsOptions(){
+
+        List<String> expAdvSettingOptions=new ArrayList<String>();
+        List<WebElement> advancedOptions =  driver.findElements(By.className("android.widget.TextView"));
+        for (WebElement advancedOption : advancedOptions) {
+            expAdvSettingOptions.add(advancedOption.getText());
+        }
+        expAdvSettingOptions.remove(1);  //removing date from list, since its not constant.
+        List<String> actAdvSettingsOptions = Arrays.asList("Advanced Options",
+                "Clear Activation", "Clear Record Store", "Force Login",
+                "Debug", "Clear Log", "Log Options", "Send Debug Data");
+        Assert.assertTrue(actAdvSettingsOptions.containsAll(expAdvSettingOptions));
+
+    }
+
+    public void enter_AdvancedOptionsPIN(String code){
+        waitForVisibilityOf(enterCodePopup);
+        driver.findElement(enterCodeEditbox).sendKeys(code);
+    }
+
+
+    //Invoice Methods
+
+    public void delete_part(){
+     List<WebElement> item_No = driver.findElements(By.id("com.xora.sprint:id/part_row_deletePartButton"));
+        item_No.get(0).click();
+    }
+
+    public void edit_part(){
+        List<WebElement> item_Edit = driver.findElements(By.id("com.xora.sprint:id/list_view_layout"));
+        item_Edit.get(0).click();
+    }
+
+    public void validate_Parts_values(){
+        driver.findElementByName("Parts").getText();
+    }
+    //Trips Methods
+
+    public void verifyPresenceOfCurrentTripAndTripsTabsOnTripsPage (){
+        new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(By.name("Current Trip")));
+        new WebDriverWait(driver, 10).until(ExpectedConditions.presenceOfElementLocated(By.name("Trips")));
+    }
+
+    public void enterOdometerReadin(String odo_reading) {
+        driver.findElement(By.name("Enter Odometer")).sendKeys(odo_reading);
+        try {
+            driver.hideKeyboard();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public void autoFillWithLastEndOdometer(String value){
+//        WebElement checkboxEle = driver.findElement(By.className("android.widget.CheckBox"));
+//        switch (value){
+//            case "check": if (!checkboxEle.isSelected()) {
+//                             checkboxEle.click();
+//                             }
+//                           break;
+//            case "unCheck": if(checkboxEle.isSelected()){
+//                           checkboxEle.click();
+//                                }
+//                            break;
+//        }
+//    }
+
+    public void enterVehicleId(String vehicleId) {
+        driver.findElement(By.xpath("//android.widget.LinearLayout[@index = '8']/android.widget.EditText")).sendKeys(vehicleId);
+        try {
+            driver.hideKeyboard();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void writeNoteOnTrip(String note) {
+        WebElement noteEl = driver.findElement(By.name("Write a note"));
+        noteEl.click();
+        noteEl.clear();
+        noteEl.sendKeys(note);
+        try {
+            driver.hideKeyboard();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void selectPurpose(String purpose) {
+        WebElement purposeEl = driver.findElement(By.xpath("//android.widget.LinearLayout[@index = '6']//android.widget.Spinner"));
+        purposeEl.click();
+        driver.findElement(By.name(purpose)).click();
+    }
+
+    public void tapImageCaptureIcon() {
+        driver.findElement(By.className("android.widget.ImageView")).click();
+    }
+
+    public void enterCommuterDistance(String value) {
+        WebElement commuter_distance = driver.findElement(By.xpath("//android.widget.LinearLayout[@index = '5']/android.widget.EditText[@index = '1']"));
+        commuter_distance.click();
+        commuter_distance.sendKeys(value);
+    }
+
+    public void enterAdditionalExpese(String value) {
+        WebElement additional_Expense = driver.findElement(By.xpath("//android.widget.LinearLayout[@index = '6']/android.widget.EditText[@index = '1']"));
+        additional_Expense.click();
+        additional_Expense.sendKeys(value);
+    }
+}

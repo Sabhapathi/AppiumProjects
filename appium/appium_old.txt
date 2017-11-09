@@ -1,0 +1,8 @@
+[caps]
+platformName = "Android"
+automationName = "Selendroid"
+platformVersion = "4.1.2"
+deviceName = " "
+app = "./TimeTrack_ATT.apk" 
+appActivity = "com.xora.device.NativeActivity"
+appPackage = "com.xora.att"

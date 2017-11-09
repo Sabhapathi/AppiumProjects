@@ -1,0 +1,8 @@
+xora\webdriver\WebDriverFactory.class
+xora\util\GenerateName.class
+xora\mobileappdriver\DriverFactory.class
+xora\pageObjects\BasePage.class
+xora\mobileappdriver\Device.class
+xora\pageObjects\MobilePage.class
+xora\mobileappdriver\Emulator.class
+xora\util\PropertyLoader.class

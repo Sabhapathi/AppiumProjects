@@ -1,0 +1,149 @@
+package com.xora.mc.pages.mileage
+
+import com.xora.mc.pages.mileage.AbstractAddPurposePopup._
+import com.xora.util.SleepTime._
+import org.openqa.selenium.support.ui.{ExpectedConditions, WebDriverWait}
+import org.openqa.selenium.{By, WebDriver}
+
+import scala.collection.JavaConverters._
+
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: Nandini
+ * Date: 8/23/13
+ * Time: 12:42 PM
+ * To change this template use File | Settings | File Templates.
+ */
+abstract class AbstractAddPurposePopup[T](driver: WebDriver, parentPage: T) {
+
+  new WebDriverWait(driver, 10)
+    .until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(IFRAME_ID))
+
+  def getPopupTitle() = {
+    val popupTitleEle = driver.findElement(By.className(TITLE_CLASS))
+    popupTitleEle.getText
+  }
+
+  def getLabelNames()= {
+    val labelEls = driver.findElements(By.tagName("label")).asScala
+    val labelsList = labelEls.filter(_.getText.nonEmpty).map(_.getText).toList
+    labelsList.patch(2,Nil,1)
+  }
+
+  def getButtonNames() = {
+    val buttonEls = driver.findElements(By.xpath("//div[@class = '"+BUTTON_CLASS+"']//a")).asScala
+    val buttonsList = buttonEls.map(_.getText).toList
+    buttonsList
+  }
+
+  def setPurposeName(purposeName: String): AbstractAddPurposePopup[T] = {
+    val nameEl = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(PURPOSE_NAME_ID)))
+    nameEl.click()
+    nameEl.clear()
+    nameEl.sendKeys(purposeName)
+    this
+  }
+
+  def setPurposeDescription(description: String) = {
+    val descriptionEl = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(DESCRIPTION_ID)))
+    descriptionEl.click()
+    descriptionEl.clear()
+    descriptionEl.sendKeys(description)
+    this
+  }
+
+  def setToDefaultPurpose(default: String) = {
+    if (default.equals("Yes")) {
+      val defaultEl = new WebDriverWait(driver, 10)
+        .until(ExpectedConditions.elementToBeClickable(By.id(ADD_PURPOSE_DEFAULT_ID)))
+      defaultEl.click()
+    }
+    this
+  }
+
+  def clickSaveAndClose() = {
+    val saveEl = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(SAVE_BUTTON_ID)))
+    saveEl.click()
+    driver.switchTo.defaultContent
+    new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.id(XORA_UNDERLAY_ID)))
+    parentPage
+  }
+
+  def clickSaveAndCloseWithEmptyField() {
+    val saveEl = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(SAVE_BUTTON_ID)))
+    saveEl.click()
+    sleepTimeInSecond(minWaitTime)
+  }
+
+  def clickCancel() = {
+    val cancelButton = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.elementToBeClickable(By.id(CANCEL_BUTTON_ID)))
+    cancelButton.click()
+    driver.switchTo.defaultContent
+    new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.id(XORA_UNDERLAY_ID)))
+    parentPage
+  }
+
+  def getAddPurposeHeadLine() = {
+    val headLineText = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.visibilityOfElementLocated(By.className(PAGE_HEADLINE_CLASS))).getText
+    headLineText.trim
+  }
+
+  def getPurposePopupErrorMessage() = {
+    val popupContentEls = driver.findElements(By.className(ERROR_MESSAGE_CLASS)).asScala
+    val popupContentList = popupContentEls.map(_.getText.trim).toList
+    popupContentList
+  }
+
+  def presenceOfMakeDefaultCheckBox() = {
+    var flag = false
+    try {
+      new WebDriverWait(driver, 10)
+        .until(ExpectedConditions.presenceOfElementLocated(By.id(MAKE_DEFAULT_CHECKBOX_ID)))
+      flag = true
+    }
+    catch {
+      case e: Exception => {
+        println("Make default purpose checkbox is not present ")
+      }
+    }
+    flag
+  }
+
+  def getDefaultCheckboxState() = {
+    var state = false
+    val makeDefaultEl = new WebDriverWait(driver, 10)
+      .until(ExpectedConditions.presenceOfElementLocated(By.id(MAKE_DEFAULT_CHECKBOX_ID)))
+    if (makeDefaultEl.isSelected) {
+      state = true
+    }
+    state
+  }
+
+  def getCurrentDefaultPurposeName() = {
+    val currentDefault = driver.findElement(By.className(CURRENT_DEFAULT_PURPOSE_CLASS_NAME))
+    currentDefault.getText
+  }
+}
+
+object AbstractAddPurposePopup {
+  val IFRAME_ID = "xrCommonDialogIFrame"
+  val TITLE_CLASS = "popupSectionHeadline"
+  val PURPOSE_NAME_ID = "purposeData.name"
+  val DESCRIPTION_ID = "purposeData.description"
+  val ADD_PURPOSE_DEFAULT_ID = "purposeData_defaultFlag_forDisplay"
+  val SAVE_BUTTON_ID = "submit"
+  val CANCEL_BUTTON_ID = "cancel"
+  val BUTTON_CLASS = "buttonPanel"
+  val XORA_UNDERLAY_ID = "xora-underlay"
+  val PAGE_HEADLINE_CLASS = "popupPageTitle"
+  val ERROR_MESSAGE_CLASS = "errorMessage"
+  val MAKE_DEFAULT_CHECKBOX_ID = "purposeData_defaultFlag_forDisplay"
+  val CURRENT_DEFAULT_PURPOSE_CLASS_NAME = "formLabelNotes-italic"
+}

@@ -1,0 +1,4 @@
+[caps]
+platformName = "android"
+app = "C:\\Users\\Sabhapathi-Akkkipalli\\Desktop\\Cucumber_Java_Appium_tests-master\\src\\apps\\TimeTrack_ATT.apk"
+deviceName = "Android Phone"

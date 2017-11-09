@@ -1,0 +1,37 @@
+require "selenium-webdriver"
+@browser = Selenium::WebDriver.for :firefox
+@browser.get "http://streetsmart.xora.com"
+@browser.find_element(:name => "username").send_keys "sabha"
+@browser.find_element(:name => "password").send_keys "sabha"
+@browser.find_element(:name => "companyId").send_keys "3017634"
+@browser.find_element(:id => "password_submit").click
+Selenium::WebDriver::Wait.new(:timeout => 60)
+@browser.get "https://streetsmart.xora.com/adapter/forms/list/doList.page"
+@browser.find_element(:id, "create").click
+Selenium::WebDriver::Wait.new(:timeout => 10)
+@browser.switch_to.frame @browser.find_element(:id, "xrCommonDialogIFrame")
+@browser.find_element(:name => "name").send_keys "formautomation"
+@browser.find_element(:name => "displayName").send_keys "formautomation"
+@browser.find_element(:name => "description").send_keys "formautomation"
+@browser.find_element(:id, "next").click
+@browser.find_element(:id, "newFieldButton").click
+@browser.find_element(:name => "fieldLabel").send_keys "TextField"
+@browser.find_element(:name => "fieldName").send_keys "TextField"
+@browser.find_element(:id, "applyButton").click
+
+
+@browser.find_element(:id, "newFieldButton").click
+dropDown = @browser.find_element(:name, "dataTypeId")
+option = Selenium::WebDriver::Support::Select.new(dropDown)
+option.select_by(:text, "Number")
+@browser.find_element(:name => "fieldLabel").send_keys "NumberField"
+@browser.find_element(:name => "fieldName").send_keys "NumberField"
+@browser.find_element(:id, "applyButton").click
+
+@browser.find_element(:id, "newFieldButton").click
+dropDown = @browser.find_element(:name, "dataTypeId")
+option = Selenium::WebDriver::Support::Select.new(dropDown)
+option.select_by(:text, "Odometer")
+@browser.find_element(:name => "fieldLabel").send_keys "OdometerField"
+@browser.find_element(:name => "fieldName").send_keys "OdometerField"
+@browser.find_element(:id, "applyButton").click

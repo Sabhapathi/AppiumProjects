@@ -1,0 +1,402 @@
+package com.xora.test.stepDefinition;
+
+import com.xora.mobileappdriver.DriverFactory;
+import com.xora.pageObjects.MobilePage;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.concurrent.TimeUnit;
+
+
+/**
+ * //Created by Nandini.Sullekal on 4/29/2016.
+ */
+public class MobileSteps extends DriverFactory {
+
+    public MobileSteps() throws MalformedURLException, IOException, InterruptedException {
+
+    }
+    @Given("^user is on mobileapp login page$")
+    public void I_am_on_the_mobileapp_login_page() throws Throwable {
+        new MobilePage(driver).waitForLoginScreen();
+    }
+    @Then("^user press \"([^\"]*)\"$")
+    public void i_press(String arg1) throws Throwable {
+        new MobilePage(driver).tapOn(arg1);
+    }
+
+    @Then("^user move into Device Summary$")
+    public void i_move_to() throws Throwable {
+        new MobilePage(driver).openPage();
+
+    }
+
+    @Then("^user wait for (\\d+) seconds$")
+    public void i_wait_for_seconds(int arg1) throws Throwable {
+        driver.manage().timeouts().implicitlyWait(arg1, TimeUnit.SECONDS);
+    }
+
+
+    @Then("^user press Home image_button$")
+    public void i_press_Home_button() throws Throwable {
+        new MobilePage(driver).touchImageButton(0);
+    }
+
+    @Then("^user press Sync image_button$")
+    public void i_press_sync_button() throws Throwable {
+        new MobilePage(driver).touchImageButton(1);
+    }
+
+    @Then("^user press GPS image_button$")
+    public void i_press_GPS_button() throws Throwable {
+        new MobilePage(driver).touchImageButton(2);
+//            List<WebElement> gps = driver.findElementsByClassName("android.widget.ImageButton");
+//            gps.get(num2).click();
+    }
+
+    @Then("^user press AddJob button$")
+    public void i_press_Addjob_button() throws Throwable {
+        new MobilePage(driver).touchImageButton(3);
+    }
+
+    @When("^user enter text \"([^\"]*)\" on Job Name field$")
+    public void enter_text_jobname(String text) throws Throwable {
+        new MobilePage(driver).enter_jobname(text);
+    }
+
+
+    @When("^user enter text \"([^\"]*)\" on Job ID field$")
+    public void enter_text_jobid(String text) throws Throwable {
+        new MobilePage(driver).enter_jobid(text);
+    }
+
+
+    @Given("^user is on mobile home page$")
+    public void I_am_on_the_landing_page() throws Throwable {
+        new MobilePage(driver).waitForLoginScreen();
+    }
+
+    @When("^user enter invalid phone number \"([^\"]*)\"$")
+    public void I_enter_invalid_phoneNumber_as(String phone_num) throws Throwable {
+        new MobilePage(driver).invalidLogin(phone_num);
+    }
+
+    @Then("^user press on \"([^\"]*)\" button$")
+    public void user_press_on_button(String buttonname) throws Throwable {
+        new MobilePage(driver).click_button(buttonname);
+    }
+
+    @When("^user enter \"([^\"]*)\" into activation field$")
+    public void I_enter_phoneNumber_as(String phone_num) throws Throwable {
+        new MobilePage(driver).validLogin(phone_num);
+    }
+
+
+    @Then("^user change the URL to \"([^\"]*)\"$")
+    public void I_change_url_to(String url) throws Throwable {
+        new MobilePage(driver).changeURL(url);
+    }
+
+
+    @Then("^user should see the text \"([^\"]*)\"$")
+    public void I_should_see_the_visibleText(String text) throws Throwable {
+        driver.manage().timeouts().implicitlyWait(120, TimeUnit.SECONDS);
+        new MobilePage(driver).verifyTextDisplayed(text);
+    }
+
+    @Then("^user select multiple pictures$")
+    public void select_pics() throws Throwable {
+        new MobilePage(driver).selectPics();
+    }
+
+    @Then("^user select picture$")
+    public void select_pic() throws Throwable {
+        new MobilePage(driver).selectPic();
+    }
+    @Then("^user capture picture$")
+    public void I_Capture_picture() throws Throwable {
+        new MobilePage(driver).capturePic();
+    }
+
+    @Then("^wait until HTTP Queue Size become zero$")
+    public void wait_until_HTTP_Queue_Size_become_zero() throws Throwable {
+        MobilePage mobilePage = new MobilePage(driver);
+        String text = mobilePage.getValue(9);
+        Boolean flag = false;
+        if (text.equals("HTTP Queue Size: 0")) {
+            flag = true;
+        }
+        while (flag.equals(false)) {
+            mobilePage.touchImageButton(0);
+            mobilePage.tapOn("Settings");
+            mobilePage.tapOn("Device Summary");
+            mobilePage.touchImageButton(1);
+            driver.scrollTo("HTTP Queue Size:");
+            Thread.sleep(30 * 1000);
+            String text1 = mobilePage.getValue(9);
+            if (text1.equals("HTTP Queue Size: 0")) {
+                flag = true;
+            }
+        }
+    }
+
+    @Then("^wait until Media Queue Size become zero$")
+    public void wait_until_Media_Queue_Size_become_zero() throws Throwable {
+        MobilePage mobilePage = new MobilePage(driver);
+        String text = mobilePage.getValue(10);
+        Boolean flag = false;
+        if (text.equals("Media Queue Size: 0")) {
+            flag = true;
+        }
+        while (flag.equals(false)) {
+            mobilePage.touchImageButton(0);
+            mobilePage.tapOn("Settings");
+            mobilePage.tapOn("Device Summary");
+            driver.scrollTo("Media Queue Size:");
+            Thread.sleep(30 * 1000);
+            String text1 = mobilePage.getValue(10);
+            if (text1.equals("Media Queue Size: 0")) {
+                flag = true;
+            }
+        }
+    }
+
+    @When("^user enter valid phone number \"([^\"]*)\"$")
+    public void I_enter_valid_phoneNumber_as(String phone_num) throws Throwable {
+        new MobilePage(driver).validLogin(phone_num);
+
+    }
+
+    @And("^wait until OK is visible$")
+    public void wait_until_locator_visible() throws Throwable {
+        new MobilePage(driver).waitForOkButton();
+    }
+
+    @When("^user clicks on \"(.*)\" button$")
+    public void user_clicks_on_button(String buttonName) throws Throwable {
+        new MobilePage(driver).click_button(buttonName);
+    }
+
+    @When("^user clicks on \"(.*)\" text$")
+    public void user_clicks_on_text(String text) throws Throwable {
+        new MobilePage(driver).click_button(text);
+    }
+
+    @When("^user waits for \"(.*)\" seconds$")
+    public void user_waits_in_seconds(int secs) throws Throwable {
+        driver.manage().timeouts().implicitlyWait(secs, TimeUnit.SECONDS);
+    }
+
+
+    @Then("^user wait for \"(.*?)\" popup and tap on \"(.*)\" button$")
+    public void i_wait_for_popup(String popup, String okButton) throws Throwable {
+        new MobilePage(driver).verifyAndClickOnNwUpdatesPopup(popup, okButton);
+    }
+
+    @Then("^user touch on \"([^\"]*)\" feature icon$")
+    public void I_Select_A_Feature(String feat_name) throws Throwable {
+        new MobilePage(driver).touchFeatureIcon(feat_name);
+    }
+
+    @Then("^user open \"([^\"]*)\" form$")
+    public void I_Select_And_Open_A_Form(String form_name) throws Throwable {
+        new MobilePage(driver).openForm(form_name);
+    }
+
+
+    @Then("^user check the checkbox$")
+    public void I_check_box() {
+        driver.findElementByClassName("android.widget.CheckBox").click();
+    }
+
+    // Forms Data Filling Steps
+    @Then("^user enter \"([^\"]*)\" into Text field$")
+    public void I_enter_text(String dataT) throws Throwable {
+        new MobilePage(driver).inputText(dataT);
+    }
+
+    @Then("^user enter \"([^\"]*)\" into Number field$")
+    public void I_enter_text1(String dataNum) throws Throwable {
+        new MobilePage(driver).inputText1(dataNum);
+    }
+
+    @Then("^user enter \"([^\"]*)\" into Odometer field$")
+    public void I_enter_text2(String dataO) throws Throwable {
+        new MobilePage(driver).inputText2(dataO);
+    }
+
+    @Then("^user enter \"([^\"]*)\" into Money field$")
+    public void I_enter_text3(String data_1) throws Throwable {
+        new MobilePage(driver).inputText3(data_1);
+    }
+
+    @Then("^user enter \"([^\"]*)\" into num_precision2 field$")
+    public void I_enter_text5(String dataNx) throws Throwable {
+        new MobilePage(driver).inputText4(dataNx);
+    }
+
+    @Then("^user select an item \"([^\"]*)\" in the list$")
+    public void I_select_items(String item1) throws Throwable {
+        new MobilePage(driver).selectItems(item1);
+    }
+
+    @Then("^user select a category \"([^\"]*)\" in the list$")
+    public void I_select_category(String category) throws Throwable {
+        new MobilePage(driver).selectCategory(category);
+    }
+
+    @Then("^user select a category item \"([^\"]*)\" in the list$")
+    public void I_select_category_item(String item) throws Throwable {
+        new MobilePage(driver).selectCategoryItem(item);
+    }
+
+    @Then("^user have selected multiple items in the list$")
+    public void I_select_multiItems() throws Throwable {
+        new MobilePage(driver).multiItems();
+    }
+
+    @Then("^user do increment or decrement the Time$")
+    public void I_change_Time() throws Throwable {
+        new MobilePage(driver).changeTime();
+    }
+
+    @Then("^user do increment or decrement the Date$")
+    public void I_change_Date() throws Throwable {
+        new MobilePage(driver).changeDate();
+    }
+
+    @Then("^user enter an email address \"([^\"]*)\" to send submitted Action$")
+    public void I_Shoot_an_Email(String email) throws Throwable {
+        new MobilePage(driver).shootEmail(email);
+    }
+
+    @Then("^user do signature$")
+    public void I_Do_Sign() throws Throwable {
+        new MobilePage(driver).doSign();
+    }
+
+    // Trips
+
+    @Then("^user enter valid Odometer Reading \"([^\"]*)\"$")
+    public void I_enter_valid_OdometerReading_as(String odo_Reading) throws Throwable {
+        new MobilePage(driver).enterOdometerReadin(odo_Reading);
+    }
+
+//    @Then("^user wants to \"([^\"]*)\" the Auto fill with the last end odometer checkbox$")
+//    public void autoFillLastEndOdometerCheckBox(String value) throws Throwable {
+//      new MobilePage(driver).autoFillWithLastEndOdometer(value);
+//    }
+
+    @Then("^user clicks on start trip camera$")
+    public void click_on_starttripcam() throws Throwable {
+        new MobilePage(driver).startTrip_camera();
+    }
+
+    @Then("^user clicks on end trip camera$")
+    public void click_on_endtripcam() throws Throwable {
+        new MobilePage(driver).endTrip_camera();
+    }
+
+
+    @Then("^user select an Category \"([^\"]*)\" in the list$")
+    public void user_select_category(String category) throws Throwable {
+        new MobilePage(driver).selectCategory(category);
+    }
+
+    @Then("^user select an Purpose \"([^\"]*)\" in the list$")
+    public void user_select_purpose(String purpose) throws Throwable {
+        new MobilePage(driver).selectPurpose(purpose);
+    }
+
+    @Then("^user links \"([^\"]*)\" jobs to Trip$")
+    public void link_job(String job)throws Throwable {
+//        new MobilePage(driver).selectItems(job);
+    }
+
+    @Then("^user enter  \"([^\"]*)\" into vehicle Id field$")
+    public void enter_vehicleId(String vehicleId) throws Throwable {
+        new MobilePage(driver).enterVehicleId(vehicleId);
+    }
+
+    @Then("^user writes \"([^\"]*)\" into note field$")
+    public  void write_note(String note) throws  Throwable{
+        new MobilePage(driver).writeNoteOnTrip(note);
+    }
+
+    @Then("^user tap on image capture icon")
+    public  void tap_on_image_capture_button() throws Throwable{
+        new MobilePage(driver).tapImageCaptureIcon();
+    }
+    @Then("^user enter value \"([^\"]*)\" into commuter Distance field$")
+    public void commuter_Distance(String value) throws Throwable {
+        new MobilePage(driver).enterCommuterDistance(value);
+    }
+
+    @Then("^user enter value \"([^\"]*)\" into additional expense$")
+    public void additional_expense(String value) throws Throwable {
+        new MobilePage(driver).enterAdditionalExpese(value);
+    }
+
+    //------------------------Settings---------------------
+    @Then("^user should see Settings options$")
+    public void settingsOptions() throws Throwable {
+        new MobilePage(driver).validateDeviceSettingsOptions();
+    }
+    @Then("^user should see Device Summary options$")
+    public void deviceSummaryPage_options() throws Throwable {
+        new MobilePage(driver).validateDeviceSummaryPageOptions();
+        driver.scrollTo("HTTP Queue Size:");
+
+    }
+    @Then("^user should see AdvancedSettings options$")
+    public void AdvancedSettings() throws Throwable {
+        new MobilePage(driver).validateAdvancedSettingsOptions();
+    }
+
+    @And("^click Back Button to go back to previous screen$")
+    public void click_Back_Button_from_device() throws Throwable {
+        new MobilePage(driver).clickonbackButton();
+    }
+
+    @Then("^user should see Log options$")
+    public void log_options() throws Throwable {
+        new MobilePage(driver).validateLogOptions();
+    }
+
+    @And("^user selects TimePicker for \"(.*)\"$")
+    public void user_selects_startshiftTimePicker(String shift) throws Throwable {
+        new MobilePage(driver).selectstartshiftTimePicker(shift);
+    }
+
+    @And("^change interval time$")
+    public void change_interval_time() throws Throwable {
+        new MobilePage(driver).change_interval_time();
+    }
+    @When("^user enter valid pin number \"([^\"]*)\"$")
+    public void enter_AdvancedOptionsPIN(String code) throws Throwable {
+        new MobilePage(driver).enter_AdvancedOptionsPIN(code);
+    }
+
+
+
+
+
+// Invoice screen
+
+    @Then("^user deletes an added part item$")
+    public void delete_added_part() throws Throwable {
+        new MobilePage(driver).delete_part( );
+
+    }
+
+    @Then("^user do Edit parts for added labor item$")
+    public void edit_added_part() throws Throwable {
+        new MobilePage(driver).edit_part( );
+    }
+//    @Then("validate Total cost and submit Invoice")
+//    {}
+}

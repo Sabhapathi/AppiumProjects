@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.clicksoftware</groupId>
+    <artifactId>Demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <scala.version>2.11.8</scala.version>
+        <scala-logging.version>2.1.2</scala-logging.version>
+    </properties>
+
+
+
+    <repositories>
+        <repository>
+            <id>scala-tools.org</id>
+            <name>Scala-Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </repository>
+        <repository>
+            <id>scala-tools.org.snapshots</id>
+            <name>Scala Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-snapshots</url>
+            <snapshots/>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>scala-tools.org</id>
+            <name>Scala-Tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.sun</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.6</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.52.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.jexcelapi</groupId>
+            <artifactId>jxl</artifactId>
+            <version>2.6.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.uncommons</groupId>
+            <artifactId>reportng</artifactId>
+            <version>1.1.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.testng</groupId>
+                    <artifactId>testng</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.cobertura</groupId>
+            <artifactId>cobertura</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-core</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-jvm-deps</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.masterthought</groupId>
+            <artifactId>cucumber-reporting</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>gherkin</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>2.0.2-beta</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-testng</artifactId>
+            <version>1.2.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.squeryl</groupId>
+            <artifactId>squeryl_2.10</artifactId>
+            <version>0.9.5-6</version>
+        </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>com.typesafe</groupId>-->
+        <!--<artifactId>scalalogging-slf4j_2.11</artifactId>-->
+        <!--<version>2.0.3</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.typesafe.scala-logging</groupId>
+            <artifactId>scala-logging-api_2.11</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.0.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.opera</groupId>
+            <artifactId>operadriver</artifactId>
+            <version>0.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.11</artifactId>
+            <version>2.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.4</version>
+        </dependency>
+
+
+
+
+
+
+    </dependencies>
+
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.opera</groupId>
+                <artifactId>operadriver</artifactId>
+                <version>1.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.seleniumhq.selenium</groupId>
+                        <artifactId>selenium-remote-driver</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <fork>true</fork>
+                    <meminitial>1024m</meminitial>
+                    <maxmem>1024m</maxmem>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.15.2</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <phase>test-compile</phase>
+                    </execution>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmArgs>
+                        <jvmArg>-Xms1024m</jvmArg>
+                        <jvmArg>-Xms1024m</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+
+
+        <profile>
+            <id>CRT</id>
+            <properties>
+                <env>CRT</env>
+                <release>Chlorine</release>
+                <browser.name>chrome</browser.name>
+                <browser.version></browser.version>
+                <browser.platform>windows</browser.platform>
+                <mc.url>https://crt-mc.xora.com/adapter</mc.url>
+                <mc.username>sabha</mc.username>
+                <mc.password>sabha</mc.password>
+                <company.id>3017634</company.id>
+                <bridge.url>http://crt-bridge.xora.com/bridge/DeviceBridgeServlet</bridge.url>
+                <mobile.worker.phone.number>9999900122</mobile.worker.phone.number>
+                <ws.url>http://stg-connector.xoraint.com</ws.url>
+                <ws.username>ws</ws.username>
+                <ws.password>a</ws.password>
+                <ws.company.id>3005114</ws.company.id>
+                <db.driver>oracle.jdbc.driver.OracleDriver</db.driver>
+                <db.url>jdbc:oracle:thin:@a-t2-crt-db01.xoraint.com:1521:xna2prd</db.url>
+                <db.username>COBRA_PROD</db.username>
+                <db.password>COBRA_PROD</db.password>
+                <time.minwait>2</time.minwait>
+                <time.maxwait>10</time.maxwait>
+                <svn.tag>Chlorine_Build</svn.tag>
+                <svn.tag.path>svn://svn.xora.com/xora/QA/trunk/automation/selenium</svn.tag.path>
+                <env.extremeslow>Y</env.extremeslow>
+                <app.name>T2</app.name>
+                <bbs.blackbox.server.type>GENX</bbs.blackbox.server.type>
+                <bbs.server.address>a-t2-crt-app01.xoraint.com</bbs.server.address>
+                <bbs.server.port>9009</bbs.server.port>
+                <bbs.calltype.protocol>TCP</bbs.calltype.protocol>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>STG</id>
+            <properties>
+                <env>STG</env>
+                <release>Chlorine</release>
+                <browser.name>chrome</browser.name>
+                <browser.version></browser.version>
+                <browser.platform>windows</browser.platform>
+                <mc.url>https://stg-mc.xora.com/adapter</mc.url>
+                <mc.username>sabha</mc.username>
+                <mc.password>sabha</mc.password>
+                <company.id>3017634</company.id>
+                <bridge.url>http://stg-bridge.xora.com/bridge/DeviceBridgeServlet</bridge.url>
+                <mobile.worker.phone.number>9999900122</mobile.worker.phone.number>
+                <ws.url>http://stg-connector.xoraint.com</ws.url>
+                <ws.username>ws</ws.username>
+                <ws.password>a</ws.password>
+                <ws.company.id>3005114</ws.company.id>
+                <db.driver>oracle.jdbc.driver.OracleDriver</db.driver>
+                <db.url>jdbc:oracle:thin:@a-t2-stg-db01.xoraint.com:1521:xna2prd</db.url>
+                <db.username>COBRA_PROD</db.username>
+                <db.password>COBRA_PROD</db.password>
+                <time.minwait>2</time.minwait>
+                <time.maxwait>10</time.maxwait>
+                <svn.tag>Chlorine_Build</svn.tag>
+                <svn.tag.path>svn://svn.xora.com/xora/QA/trunk/automation/selenium</svn.tag.path>
+                <env.extremeslow>Y</env.extremeslow>
+                <app.name>T2</app.name>
+                <bbs.blackbox.server.type>GENX</bbs.blackbox.server.type>
+                <bbs.server.address>a-t2-stg-app01.xoraint.com</bbs.server.address>
+                <bbs.server.port>9009</bbs.server.port>
+                <bbs.calltype.protocol>TCP</bbs.calltype.protocol>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>Prod</id>
+            <properties>
+                <env>Prod</env>
+                <release>Scandium</release>
+                <browser.name>chrome</browser.name>
+                <browser.version></browser.version>
+                <browser.platform>windows</browser.platform>
+                <mc.url>https://streetsmart.xoraint.com/adapter</mc.url>
+                <mc.username>sabha</mc.username>
+                <mc.password>sabha</mc.password>
+                <company.id>3017634</company.id>
+                <bridge.url>http://bridgeprod.etrace.com/bridge/DeviceBridgeServlet</bridge.url>
+                <mobile.worker.phone.number>9999900122</mobile.worker.phone.number>
+                <ws.url>http://connectorprod.etrace.com</ws.url>
+                <ws.username>ws</ws.username>
+                <ws.password>a</ws.password>
+                <ws.company.id>3005114</ws.company.id>
+                <db.driver>oracle.jdbc.driver.OracleDriver</db.driver>
+                <db.url>jdbc:oracle:thin:@a-t2-prod-db.xoraint.com:1521:xna2prd</db.url>
+                <db.username>COBRA_PROD_RO</db.username>
+                <db.password>R3ad$N33d</db.password>
+                <time.minwait>4</time.minwait>
+                <time.maxwait>10</time.maxwait>
+                <svn.tag>Chlorine_Build</svn.tag>
+                <svn.tag.path>svn://svn.xoraint.com/xora/QA/trunk/automation/selenium</svn.tag.path>
+                <env.extremeslow>Y</env.extremeslow>
+                <app.name>T2</app.name>
+                <bbs.blackbox.server.type>GENX</bbs.blackbox.server.type>
+                <bbs.server.address>a-t2-prod-bbs01.xoraint.com</bbs.server.address>
+                <bbs.server.port>9009</bbs.server.port>
+                <bbs.calltype.protocol>TCP</bbs.calltype.protocol>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>Test</id>
+            <properties>
+                <env>Test</env>
+                <release>Chlorine</release>
+                <browser.name>chrome</browser.name>
+                <browser.version></browser.version>
+                <browser.platform>windows</browser.platform>
+                <mc.url>https://crt-mc.xora.com/adapter</mc.url>
+                <mc.username>sabha</mc.username>
+                <mc.password>sabha</mc.password>
+                <company.id>3017634</company.id>
+                <bridge.url>http://crt-bridge.xora.com/bridge/DeviceBridgeServlet</bridge.url>
+                <mobile.worker.phone.number>9999900122</mobile.worker.phone.number>
+                <ws.url>http://stg-connector.xoraint.com</ws.url>
+                <ws.username>ws</ws.username>
+                <ws.password>a</ws.password>
+                <ws.company.id>3005114</ws.company.id>
+                <db.driver>oracle.jdbc.driver.OracleDriver</db.driver>
+                <db.url>jdbc:oracle:thin:@a-t2-stg-db01.xoraint.com:1521:xna2prd</db.url>
+                <db.username>COBRA_PROD</db.username>
+                <db.password>COBRA_PROD</db.password>
+                <time.minwait>2</time.minwait>
+                <time.maxwait>10</time.maxwait>
+                <svn.tag>Chlorine_Build</svn.tag>
+                <svn.tag.path>svn://svn.xora.com/xora/QA/trunk/automation/selenium</svn.tag.path>
+                <env.extremeslow>Y</env.extremeslow>
+                <app.name>T2</app.name>
+                <bbs.blackbox.server.type>GENX</bbs.blackbox.server.type>
+                <bbs.server.address>a-t2-stg-app01.xoraint.com</bbs.server.address>
+                <bbs.server.port>9009</bbs.server.port>
+                <bbs.calltype.protocol>TCP</bbs.calltype.protocol>
+            </properties>
+        </profile>
+
+    </profiles>
+
+</project>

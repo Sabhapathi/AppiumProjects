@@ -1,0 +1,24 @@
+ Feature:Login
+ Given My Appium is running
+ 
+ @need_restart	
+ Scenario:Mobile Activity
+	Given I enter "9999900101" into activation field
+	Then I press on "Activate" button
+    Then I wait for 60 seconds
+	Then I wait to tap on "I Agree" button
+	Then I wait to tap on "Ok" button 
+    #Then I wait for 240 seconds
+    Then I wait for "New Updates" popup to appear
+    Then I press "Ok"
+	Then I press Home button
+    Then I wait for 3 seconds
+#   	Then I press "Settings"
+#    Then I press "Notifications"
+#	Then I check Start Break checkbox number
+#    Then I press Home button
+#    Then I perform Timesheet actions 1 times
+#	Then I wait for 30 seconds
+#    Then I press Home button
+#	Then I wait for 3 seconds
+

@@ -1,0 +1,42 @@
+Feature: Xora
+Scenario:Trips
+	
+	 Then I wait for 10 seconds 	
+	 Then I wait for "Trips"
+	 Then I press "Trips"
+	 
+
+Scenario:Start Trip
+	  Then I wait for 5 seconds 
+	  Then I see the text "Start Trip"
+	  Then I enter "123.2" into odometer
+	  Then I toggle checkbox number
+	  #Then I select category by spinner index 0
+	  #Then I press "Personal"
+	  #Then I select purpose by spinner index 1
+	  #Then I press "zzzzz"
+	  #Then I press "Select a Job"
+Scenario:Click Start Trip	  
+	   Then I press "Start"
+	  Then I wait for 2 seconds
+
+Scenario:End Trip
+  
+	  Then I see the text "End Trip"
+	  Then I enter "123.2" into odometer
+	  Then I enter "123" into expenses	  
+	  Then I enter " extended on endtrip" into notes
+Scenario:Click End Trip	 
+	 Then I press "End"
+
+Scenario:TripList  
+	Then I see the text "Today"
+	Then I press "Today"
+	
+
+Scenario:TripDetails  
+	Then I see the text "Today"
+	Then I see the text " extended on endtrip"
+	Then I press Home button
+	Then I wait for 3 seconds
+	

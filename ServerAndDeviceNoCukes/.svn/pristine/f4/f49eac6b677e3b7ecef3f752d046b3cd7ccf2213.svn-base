@@ -1,0 +1,136 @@
+# Created by Murali.Kapu at 12/27/2016
+
+Feature: FormSanity
+
+#  Background: Login
+  Scenario: FormSanity
+    Given user is on mobile home page
+
+    When user enter "999999999" into activation field
+#Given I enter "999999999" to activate worker
+    Then user press on "Activate" button
+    Then user should see the text "Set Bridge URL"
+    Then user change the URL to "http://crt-bridge.xora.com/bridge/DeviceBridgeServlet"
+    Then user press on "Update" button
+    When user enter valid phone number "9999900111"
+    Then user press on "Activate" button
+    Then user should see the text "EULA"
+    When user clicks on "I Agree" button
+    Then user should see the text "Warning"
+    And user clicks on "Ok" button
+#    Then I wait for "New Updates" popup and tap on "OK" button
+
+
+#  Feature: Xora
+
+#  Scenario: Forms:OpenForm
+    Then user wait for 240 seconds
+    Then user press "Ok"
+    Then user press Sync image_button
+    Then user wait for 4 seconds
+    Then user press GPS image_button
+    Then user wait for 4 seconds
+
+#  Scenario:TimeSheets
+
+    Then user touch on "Timesheets" feature icon
+    Then user wait for 2 seconds
+   Then user press "Start Shift"
+   Then user wait for 2 seconds
+##Scenario:TimeSheets:Start Break
+    Then user press "Start Break"
+   Then user wait for 2 seconds
+##Scenario:TimeSheets:End Break
+   Then user press "End Break"
+   #Then I press "Submit"
+    Then user wait for 4 seconds
+##Scenario:TimeSheets:End Shift
+    Then user press "End Shift"
+##    Then I press "Submit"
+
+
+#    Scenario : Forms
+   Then user press Home image_button
+    Then user wait for 4 seconds
+    Then user press Sync image_button
+    Then user wait for 4 seconds
+    Then user touch on "Forms" feature icon
+    Then user wait for 5 seconds
+    Then user open "AutomationForm" form
+    Then user wait for 2 seconds
+#  Scenario: Forms:without filling fields
+    Then user press "Submit"
+    Then user press "Skip"
+    Then user wait for 5 seconds
+
+#
+#  Scenario: Forms: fill the form
+#  Scenario: Forms Submission
+
+  #Then user touch "Forms" feature icon
+  #Then user wait for 5 seconds
+    Then user open "AutomationForm" form
+    Then user wait for 5 seconds
+    Then user enter "abcdef123" into text_field1
+
+#  #Then user enter "12345" into multi-text field
+#
+#  #Scenario: Forms: Form Numeric precision 1
+#  #Then user enter "1234.1" into number_precision field
+#
+#  #Scenario: Forms: Form Money field
+#  #Then user enter "123" into Money field
+#
+#  #Then user enter "500000" into Odometer field
+#
+#  #Scenario: Forms: Single Select
+#    Then user select an item "b" in the list
+#
+#  #Scenario: Forms: Multi-Select
+#    Then user have selected multiple items "manual","automation","automation1" in the list
+#    Then user press "Ok"
+#    Then user press "Next"
+#  #Scenario: Forms: Picture capture and Signature
+#  #Then user press "Tap to capture one or more pictures"
+#  #Then user wait for 2 seconds
+#  #Then user capture picture
+#  #Then user wait for 2 seconds
+#  #Then user save picture
+#  #Then user wait for 5 seconds
+#  #Then user press "OK"
+#  #Then user press "Ok"
+#    Then user press "Next"
+#
+#    Then user press "Tap to capture one or more signatures"
+#    Then user wait for 5 seconds
+#  #Then user swipe left
+#  #Then user swipe right
+#    Then user press "Save"
+#    Then user press "Next"
+#
+#  Scenario: Forms: Check-Box and TimeChange
+#  #Then user increment r decrement the Time
+#    Then user press "Next"
+#    Then user check the check-box
+#    Then user press "Next"
+#    Then user wait for 2 seconds
+#
+#  Scenario: Forms: Cascade list
+#    Then user select an item "Canada" in the first dropdown cascading list
+#    Then user press "Next"
+#    Then user select an item "BC" in the second dropdown list
+#    Then user press "Next"
+#    Then user select an item "Capital" in the next to second cascading list
+#    Then user press "Next"
+##Then user press "Next"
+##Then user press "Next"
+
+#  Scenario: Form submit
+    Then user press "Submit"
+#  Scenario: Form Email
+#    Then user enter an email address "abc@bc.com " to send submitted Action
+    Then user press "Skip"
+    Then user wait for 3 seconds
+#    Then user see the text "A Copy of the Form will be emailed shortly"
+#    Then user press Home button
+#    Then user wait for 3 seconds

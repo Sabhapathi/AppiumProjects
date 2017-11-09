@@ -1,0 +1,107 @@
+package com.xora.test.admin
+
+import com.xora.mc.util.LoadableElement
+import com.xora.test.SeleniumPostLoginTest
+import com.xora.tests.DataDriven
+import com.xora.util.GenerateName._
+import com.xora.util.SleepTime._
+import cucumber.api.CucumberOptions
+import cucumber.api.junit.Cucumber
+import cucumber.api.testng.TestNGCucumberRunner
+import org.junit.runner.RunWith
+import org.scalatest.matchers.ShouldMatchers
+import org.testng.annotations.{BeforeClass, DataProvider, Test}
+
+/*
+ * Created by Karthik.Sabbam on 1/10/2017.
+ */
+
+@RunWith(classOf[Cucumber])
+@CucumberOptions(
+  features = Array("src/test/resources/features/timesheetSanity.feature"),
+  glue = Array("com.xora.test.stepDefinition"),
+  dryRun = false,
+  plugin = Array("html:output"))
+class InvoicesSanityTest extends SeleniumPostLoginTest with LoadableElement with ShouldMatchers with DataDriven {
+
+  @BeforeClass
+  def deletePreviousParts(): Unit = {
+    val partsCatalogPage = securedPage.loadPartsCatalogPage
+    val partContextMenu = partsCatalogPage.contextMenuOfPart("Part1")
+    sleepTime((minWaitTime/2)*1000)
+    partContextMenu.acceptDeletePart()
+    sleepTime(minWaitTime*1000)
+   }
+
+  @Test
+  def invoicesSanityTest() = {
+
+   // Create Job
+   var jobListPage = securedPage.loadJobListPage
+   val jobCreatePopup = jobListPage.createNewJob("2 Action Jobs")
+   val jobID = generateName("Job")
+   jobCreatePopup.selectStepJobDetails.setJobDetails(jobID, "Auto:InvoicesDeviceSanity", "")
+   jobCreatePopup.selectStepJobParameters.setSkills("All Skills")
+   jobCreatePopup.selectStepJobLocation.setJobLocation("MN,510 South Walnut Street,,Bondville,IL,61815", "Xora,651-209-0421,a@b.com", "Yes", "", "", "", "", "", "")
+   jobCreatePopup.selectStepJobScheduleAndAssign.setJobScheduleAndAssign("One Time Job", "", "", "UTC-06:00 Central Time (US&Canada)", "1,hours", "NA", "Medium", "Android", "Android_Appium")
+   jobListPage = jobCreatePopup.saveAndClose
+   sleepTime(minWaitTime * 1000)
+
+   // Create Part
+   var partsCatalogPage = securedPage.loadPartsCatalogPage
+    val partNumber = "Part1"
+    val partName = "PartName1"
+    val unitPrice = "4.05"
+    val quantity = "1.0"
+    val taxRate = "3.245%"
+
+   val addNewPartPopup2 = partsCatalogPage.addNewPart()
+   addNewPartPopup2.setPartNumber(partNumber)
+   addNewPartPopup2.setPartName(partName)
+   addNewPartPopup2.setPartCategory("Default")
+   addNewPartPopup2.setUnitPrice(unitPrice)
+   addNewPartPopup2.setTaxRate(taxRate)
+   addNewPartPopup2.setBarcodeNumber("1122334466")
+   addNewPartPopup2.saveAndClose()
+   sleepTime((minWaitTime/2)*1000)
+
+  // Device InvoiceTest
+   val device = new TestNGCucumberRunner(this.getClass)
+   device.runCukes()
+
+   // Validate Invoice Details on Job Details Page
+   jobListPage = securedPage.loadJobListPage
+   jobListPage.searchJob(jobID)
+   val jobContextMenu = jobListPage.contextMenuOfJob(jobID)
+   val jobDetailsPage = jobContextMenu.JobDetails()
+   sleepTime((minWaitTime / 2) * 1000)
+    val expTotalPartsCost = "4.05"
+    val expLabourCost = "0.00"
+    val expTaxRate = "0.13"
+    val expTotalCost = "4.18"
+
+   val invoiceDetailsInJobDetailsPage = jobDetailsPage.getPartsDetailListFromInvoiceDetailsSection
+   val expInvoiceDetailsInJobDetailsPage = List(List(partName, "$ " + unitPrice, quantity, "$ " + expTotalPartsCost, taxRate))
+   invoiceDetailsInJobDetailsPage should be(expInvoiceDetailsInJobDetailsPage)
+
+   val costDetailsList = List(jobDetailsPage.getTotalPartsCost, jobDetailsPage.getTotalLabourCost, jobDetailsPage.getTaxRate, jobDetailsPage.getTotalCost)
+   val expCostDetailsList = List("$ " + expTotalPartsCost, "$ " + expLabourCost, "$ "+ expTaxRate, "$ " + expTotalCost)
+   costDetailsList should be(expCostDetailsList)
+
+    // Delete Job
+    jobListPage = securedPage.loadJobListPage
+    sleepTime((minWaitTime / 2) * 1000)
+    jobListPage.searchJob(jobID)
+    jobListPage.contextMenuOfJob(jobID)
+    sleepTime((minWaitTime / 2) * 1000)
+    jobContextMenu.deleteJobDelete()
+
+    //Delete Part
+    partsCatalogPage = securedPage.loadPartsCatalogPage
+    val partContextMenu = partsCatalogPage.contextMenuOfPart(partNumber)
+    sleepTime((minWaitTime/2)*1000)
+    partContextMenu.acceptDeletePart()
+    sleepTime(minWaitTime*1000)
+
+  }
+}

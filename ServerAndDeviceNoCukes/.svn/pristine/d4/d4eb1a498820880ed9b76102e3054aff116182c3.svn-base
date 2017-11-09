@@ -1,0 +1,43 @@
+# Created by Nandini.Sullekal at 12/15/2016
+Feature: TimeSheetSanity
+
+#  Background: Login
+  Scenario: TimeSheetSanity
+    Given user is on mobile home page
+
+    When user enter "999999999" into activation field
+#Given I enter "999999999" to activate worker
+    Then he press on "Activate" button
+    Then he should see the text "Set Bridge URL"
+    Then he change the URL to "http://stg-bridge.xora.com/bridge/DeviceBridgeServlet"
+    Then he press on "Update" button
+    When user enter valid phone number "9999900111"
+    Then he press on "Activate" button
+    Then he should see the text "EULA"
+    When user clicks on "I Agree" button
+    Then he should see the text "Warning"
+    And user clicks on "Ok" button
+#    Then I wait for "New Updates" popup and tap on "OK" button
+
+
+
+#  Scenario:TimeSheets
+    Then I press "Timesheets"
+
+    Then I wait for 4 seconds
+    Then I press "Start Shift"
+    Then I wait for 4 seconds
+  #Scenario:TimeSheets:Start Break
+    Then I press "Start Break"
+    Then I wait for 4 seconds
+  #Scenario:TimeSheets:End Break
+    Then I press "End Break"
+      #Then I press "Submit"
+    Then I wait for 4 seconds
+  #Scenario:TimeSheets:End Shift
+    Then I press "End Shift"
+#    Then I press "Submit"
+    Then I press "No"
+#    Then I wait for 5 seconds
+#    Then I press Home button
+#    Then I wait for 3 seconds

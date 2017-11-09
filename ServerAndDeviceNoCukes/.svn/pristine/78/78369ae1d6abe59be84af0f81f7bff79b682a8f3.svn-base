@@ -1,0 +1,19 @@
+package com.xora.pageObjects;
+
+import io.appium.java_client.android.AndroidDriver;
+
+/**
+ * Created by Nandini.Sullekal on 12/15/2016.
+ */
+public class HomePage extends BasePage {
+
+    public HomePage(AndroidDriver driver) {super(driver);}
+
+//    public TimeSheetsPage  clickOnTimeSheetIcon() {
+//        driver.findElement(By.name("Timesheets")).click();
+//        waitForVisibilityOf(By.xpath("//[@text = 'Click to Start Shift']"));
+//        return new TimeSheetsPage(driver);
+
+//    }
+
+}

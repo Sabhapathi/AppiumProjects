@@ -1,0 +1,7 @@
+[caps]
+platformName = "Android"
+platformVersion = "4.2.2"
+deviceName = " "
+app = "./TimeTrack_ATT.apk" 
+appActivity = "com.xora.device.NativeActivity"
+appPackage = "com.xora.att"

@@ -1,0 +1,26 @@
+Feature: Xora
+
+Scenario:TimeSheets  
+      Then I press "Timesheets"
+
+Scenario:TimeSheets:All TimeCard Actions      
+      
+	  Then I press "Start Shift"
+    
+#Scenario:TimeSheets:Start Break      
+      Then I press "Start Break"
+	  #Then I press "Submit"
+    
+#Scenario:TimeSheets:End Break      
+      Then I press "End Break"
+	   #Then I press "Submit"
+
+#Scenario:TimeSheets:End Shift      
+      Then I press "End Shift"
+	  #Then I press "Submit"
+     # Then I press "No" 
+		  Then I wait for 5 seconds
+        Then I press Home button
+	    Then I wait for 3 seconds
+      
+   

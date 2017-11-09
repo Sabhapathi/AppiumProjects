@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Automation Test Suite" parallel="false" >
+    <listeners>
+        <listener class-name="org.uncommons.reportng.HTMLReporter"/>
+    </listeners>
+
+    <!--<suite-files>-->
+       <!-- -->
+        <!--&lt;!&ndash;<suite-file path="bridge_suite.xml"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<suite-file path="mc_suite.xml"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<suite-file path="uploadTests_suite.xml"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<suite-file path="mc_sanity_suite.xml"/>&ndash;&gt;-->
+    <!--</suite-files>-->
+
+    <!--<test name="DummyTest" preserve-order="true">-->
+        <!--<classes>-->
+            <!--<class name="com.xora.test.admin.TimeSheetsSanityTest"/>-->
+        <!--</classes>-->
+    <!--</test>-->
+
+    <test name="TimesheetSanityTest" preserve-order="true">
+        <classes>
+            <class name="com.xora.test.admin.TimeSheetsSanityTest"/>
+        </classes>
+    </test>
+
+
+    <!--<test name="MessageSanityTest" preserve-order="true">-->
+        <!--<classes>-->
+            <!--<class name="com.xora.test.admin.SampleClass"/>-->
+        <!--</classes>-->
+    <!--</test>-->
+
+
+
+</suite>

@@ -1,0 +1,55 @@
+# Created by Nandini.Sullekal at 1/16/2017
+Feature: Trips Sanity
+  # Enter feature description here
+
+  Scenario:Do Start and End Trip
+
+    Given user is on mobile home page
+    When user enter "999999999" into activation field
+    Then user press on "Activate" button
+    Then user should see the text "Set Bridge URL"
+    Then user change the URL to "http://crt-bridge.xora.com/bridge/DeviceBridgeServlet"
+    Then user press on "Update" button
+    When user enter valid phone number "9999900122"
+    Then user press on "Activate" button
+    Then user should see the text "EULA"
+    When user clicks on "I Agree" button
+    Then user should see the text "Warning"
+    And user clicks on "Ok" button
+    Then user wait for "New Updates" popup and tap on "Ok" button
+    Then  user wait for 20 seconds
+
+    When user touch on "Trips" feature icon
+    Then user clicks on "Current Trip" button
+    Then user should see the text "Start Trip"
+    Then user should see the text "Start Odometer(*)"
+    Then user enter valid Odometer Reading "400"
+    Then user tap on image capture icon
+    Then user wait for 2 seconds
+    Then user capture picture
+    Then user wants to "unCheck" the Auto fill with the last end odometer checkbox
+    Then user select an Category "Personal" in the list
+    Then user select an Purpose "Business Trip" in the list
+    Then user writes "Trip started" into note field
+    Then user clicks on "Start" button
+
+    Then user should see the text "End Trip"
+    Then user should see the text "End Odometer(*)"
+    Then user should see the text "Start Odometer"
+    Then user should see the text "400.0"
+    Then user should see the text "Commuter Distance"
+    Then user should see the text "Commuter Distance"
+    Then user should see the text "Additional Expenses"
+    Then user enter valid Odometer Reading "500"
+    Then user enter value "5" into commuter Distance field
+    Then user enter value "20.00" into additional expense
+    Then user clicks on "End" button
+
+    Then user press Home image_button
+    Then user press Sync image_button
+    Then user waits for "10" seconds
+    Then user touch on "Settings" feature icon
+    Then user press "Device Summary"
+    Then wait until HTTP Queue Size become zero
+    Then user press Home image_button
+

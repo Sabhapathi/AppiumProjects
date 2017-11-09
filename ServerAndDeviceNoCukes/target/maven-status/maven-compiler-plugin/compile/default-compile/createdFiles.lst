@@ -1,0 +1,14 @@
+com\xora\pageObjects\MobilePage.class
+com\xora\pageObjects\DeviceLoginPage.class
+com\xora\mobileappdriver\Device.class
+com\xora\util\SleepTime.class
+com\xora\mobileappdriver\DriverFactory.class
+com\xora\util\PropertyLoader.class
+com\xora\pageObjects\MessagesPage.class
+com\xora\pageObjects\TimeSheetsPage.class
+com\xora\util\GenerateName.class
+com\xora\mobileappdriver\DriverFactory1.class
+com\xora\pageObjects\HomePage.class
+com\xora\pageObjects\BasePage.class
+com\xora\webdriver\WebDriverFactory.class
+com\xora\mobileappdriver\Emulator.class

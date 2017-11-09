@@ -1,0 +1,308 @@
+package com.xora.mc.pages.Forms
+
+import java.util
+
+import com.xora.mc.util.LoadableElement
+import com.xora.util.Optionally
+import com.xora.util.SleepTime._
+import org.openqa.selenium.support.ui
+import org.openqa.selenium.support.ui.{ExpectedConditions, LoadableComponent, WebDriverWait}
+import org.openqa.selenium.{By, WebDriver}
+import com.xora.mc.pages.Forms.SubmittedFormsListPage._
+import scala.collection.JavaConverters._
+
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: Nandini
+ * Date: 11/28/13
+ * Time: 3:05 PM
+ * To change this template use File | Settings | File Templates.
+ */
+class SubmittedFormsListPage(val driver: WebDriver, val baseUrl: String)
+  extends LoadableComponent[SubmittedFormsListPage]
+  with LoadableElement with Optionally {
+
+//  private var dateFilter: DateFilterTimePeriodPickerWidget = null
+
+
+  def load() {
+    val url = baseUrl + "/submittedforms/list/doList.page"
+    driver.get(url)
+  }
+
+  def isLoaded {
+    verifyElementLoaded(driver, By.xpath(PAGE_TITLE_XPATH))
+  }
+
+  def pageHeader(): String = {
+    val pageHeaderEl = driver.findElement(By.className(TITLE_CLASS))
+    val pageHeadline = pageHeaderEl.getText.trim
+    pageHeadline
+  }
+
+  def columnNames(): List[String] = {
+    val tableHeadersEls = driver.findElements(By.xpath(SUBMITTED_FORMS_COLUMNS_XPATH)).asScala
+    val tableHeaderNamesList = tableHeadersEls.map(_.getText.trim).toList
+    tableHeaderNamesList
+  }
+
+  def sort(columnName: String, order: String): SubmittedFormsListPage = {
+    val columnEl = new WebDriverWait(driver, maxWaitTime + 5).until(ExpectedConditions.elementToBeClickable(By.xpath(SUBMITTED_FORMS_COLUMNS_XPATH + "[.//*[contains(text(),'" + columnName + "')]]")))
+       if (columnEl.getAttribute(INNER_HTML).contains("style")) {
+         val columnEl = new WebDriverWait(driver, maxWaitTime + 5).until(ExpectedConditions.elementToBeClickable(By.xpath(SUBMITTED_FORMS_COLUMNS_XPATH + "//span[text() = '" + columnName + "']")))
+         columnEl.click()
+         sleepTime(minWaitTime * 1000)
+         optionally {
+           val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+           new WebDriverWait(driver, maxWaitTime)
+             .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+         }
+       }
+
+    sleepTime(minWaitTime * 1000)
+    val sortedImg = new WebDriverWait(driver, maxWaitTime + 5).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(SUBMITTED_FORMS_COLUMNS_XPATH + "//img"))).getAttribute("src")
+    if (order.equalsIgnoreCase("ascending")) {
+      if (sortedImg.contains("sortArrowUp.gif")) {
+        sleepTime(minWaitTime * 1000)
+        driver.findElement(By.xpath(SUBMITTED_FORMS_COLUMNS_XPATH + "//span[text() = '" + columnName + "']")).click()
+        sleepTime(minWaitTime * 1000)
+        optionally {
+          val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+          new WebDriverWait(driver, maxWaitTime + 5)
+            .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+        }
+        sleepTime(minWaitTime * 1000)
+      }
+    }
+    if (order.equalsIgnoreCase("descending")) {
+      if (sortedImg.contains("sortArrowDown.gif")) {
+        sleepTime(minWaitTime * 1000)
+
+        val columnELe = driver.findElement(By.xpath(SUBMITTED_FORMS_COLUMNS_XPATH + "[.//*[contains(text(),'" + columnName + "')]]"))
+        columnELe.click()
+        sleepTime(minWaitTime * 1000)
+        optionally {
+          val busyMessage = driver.findElement(By.className(BUSY_MSG_CLASS)).getText
+          new WebDriverWait(driver, maxWaitTime + 5)
+            .until(ui.ExpectedConditions.invisibilityOfElementWithText(By.className(BUSY_MSG_CLASS), busyMessage))
+        }
+        sleepTime(minWaitTime * 1000)
+      }
+    }
+    this
+  }
+
+  def getLatestSubmittedFormRow = {
+    sleepTime(minWaitTime * 1000)
+    sort("Submitted Date", "descending")
+    sleepTime(minWaitTime * 1000)
+    driver.navigate().refresh()
+    val latestFormEl = new WebDriverWait(driver, maxWaitTime)
+      .until(ExpectedConditions.elementToBeClickable(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr[2]")))
+    latestFormEl
+  }
+
+  def getLatestFormName = {
+    val formName = driver.findElement(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[2]")).getText
+    formName.trim
+  }
+
+  def getLatestFormSubmittedBy = {
+    val formSubmittedBy = driver.findElement(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[4]")).getText
+    formSubmittedBy.trim
+  }
+
+  def getLatestFormLinkedActivity = {
+    val formLinkedAction = driver.findElement(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[3]")).getText
+    formLinkedAction.trim
+  }
+
+  def getLatestFormLocation = {
+    var location: String = ""
+    val formLocation = driver.findElement(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[5]")).getText.split("\n")
+    for (i <- 0 until formLocation.size ){
+      location = location + " " + formLocation(i)
+    }
+    location.trim
+  }
+
+  def validateLatestDateColumnIsNotEmpty() = {
+    val formDateAndTime = driver.findElement(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[1]")).getText
+    var datePresent = false
+    if (!formDateAndTime.isEmpty) {
+      datePresent = true
+    }
+    datePresent
+  }
+
+  def getLatestDateAndTime = {
+    val formDateAndTime = driver.findElement(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[1]")).getText
+    formDateAndTime
+  }
+
+  def contextMenuOfLatestForm() = {
+    val formRowEl = getLatestSubmittedFormRow.findElement(By.tagName("td"))
+    sleepTime(minWaitTime * 1000)
+    formRowEl.click()
+    sleepTime(minWaitTime * 1000)
+    new SubmittedFormsContextMenuPopup(driver, this)
+  }
+
+//  def getDateFilter: DateFilterTimePeriodPickerWidget = {
+//    if (dateFilter == null) {
+//      dateFilter = new DateFilterTimePeriodPickerWidget(driver, "")
+//    }
+//    dateFilter
+//  }
+
+  def formFilter() = {
+    val formFilterEl = driver.findElement(By.id(FORM_FILTER_ID))
+    formFilterEl.click()
+    new FormFilterPopup(driver, this)
+  }
+
+  def getAllFormNames = {
+    val formNames = driver.findElements(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[2]")).asScala
+    var formNamesList = formNames.map(_.getText.trim).toList
+    if(formNamesList.isEmpty){
+      formNamesList = List("Empty")
+    }
+    formNamesList
+  }
+
+  def getAllSubmittedByWorkerNames = {
+    val workerNames = driver.findElements(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[4]")).asScala
+    var workerNamesList = workerNames.map(_.getText.trim).toList
+    if(workerNamesList.isEmpty){
+      workerNamesList = List("Empty")
+    }
+    workerNamesList
+  }
+
+  def getAllFormActivities = {
+    val formActions = driver.findElements(By.xpath(SUBMITTED_FORMS_TABLE_XPATH + "//tr//td[3]")).asScala
+    var formActionsList = formActions.map(_.getText.trim).toList
+    if(formActionsList.isEmpty){
+      formActionsList = List("Empty")
+    }
+    formActionsList
+  }
+
+  def verifyTwoList(mainList: List[String], subList: List[String]) = {
+    val list1 = mainList.toSet
+    val list2 = subList.toSet
+    var flag = false
+    if (list2.subsetOf(list1)) {
+      flag = true
+    }
+    flag
+  }
+
+  def getToolBars = {
+    val toolBarEl = driver.findElement(By.id(TOOL_BAR_ID))
+    val toolBarsListEls = toolBarEl.findElements(By.tagName("tr")).asScala
+    val toolBarValuesList = toolBarsListEls.filter(!_.getText.contains("Date Filter")).filter(_.getText.nonEmpty).map(_.getText.trim).toList.patch(3,Nil,1)
+    toolBarValuesList
+  }
+
+  def isExcelAndHelpLinkPresent = {
+    var flag = false
+    val excelDownloadIcon = new WebDriverWait(driver,maxWaitTime).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(EXCEL_DOWNLOAD_ICON_XPATH)))
+    val helpIcon =  new WebDriverWait(driver,maxWaitTime).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(HELP_ICON_XPATH)))
+    if(excelDownloadIcon.isDisplayed && helpIcon.isDisplayed){
+      flag = true
+    }
+    flag
+  }
+
+  def clickHelpLinkAndValidate: String = {
+    val parentWindowHandle = driver.getWindowHandle
+    val helpLink = driver.findElement(By.xpath("//a[@id = '"+HELP_ICON_ID+"']"))
+    helpLink.click()
+    sleepTime(2000)
+    val windowHandles: util.Set[String] = driver.getWindowHandles
+    import scala.collection.JavaConversions._
+    var done = false
+    for (windowHandle <- windowHandles if !done) {
+      if (!(windowHandle == parentWindowHandle)) {
+        driver.switchTo.window(windowHandle)
+        done = true
+      }
+    }
+    val pageHeader = driver.findElement(By.className("pageHeader")).getText
+    driver.close()
+    driver.switchTo().window(parentWindowHandle)
+    pageHeader
+  }
+
+  def presenceOfDateFilter() = {
+    val dateFilterEl = driver.findElement(By.id("inline-date-filter-container"))
+    val flag = dateFilterEl.isDisplayed
+    flag
+  }
+
+  def validateExpandToolBar() = {
+    var flag = false
+    val toolBarEl = driver.findElement(By.id(TOOL_BAR_EXPAND_OR_COLLAPSE_IMAGE_ID))
+    if(toolBarEl.getAttribute("src").contains(EXPAND_IMAGE)){
+      toolBarEl.click()
+    }
+    if(toolBarEl.getAttribute("src").contains(COLLAPSE_IMAGE)){
+      flag = true
+    }
+    flag
+  }
+
+  def validateCollapseToolBar() = {
+    var flag = false
+    val toolBarEl = driver.findElement(By.id(TOOL_BAR_EXPAND_OR_COLLAPSE_IMAGE_ID))
+    if(toolBarEl.getAttribute("src").contains(COLLAPSE_IMAGE)){
+      toolBarEl.click()
+    }
+    if(toolBarEl.getAttribute("src").contains(EXPAND_IMAGE)){
+      flag = true
+    }
+    flag
+  }
+
+  def isRefreshLinkPresent = {
+    val refreshEl = new WebDriverWait(driver, maxWaitTime).until(ExpectedConditions.elementToBeClickable(By.className("refreshNowButton")))
+    val flag =  refreshEl.isDisplayed
+    flag
+  }
+
+  def groupFilter = {
+    val groupFilterEl = driver.findElement(By.id(GROUP_FILTER_ID))
+    groupFilterEl.click()
+//    new GroupFilterPopup(driver)
+  }
+
+  def clickFormButtonInToolBar = {
+    val formButtonEl = driver.findElement(By.id(FORM_BUTTON_ID))
+    formButtonEl.click()
+//    new FormsListPage(driver,baseUrl)
+  }
+
+}
+
+object SubmittedFormsListPage {
+  val PAGE_TITLE = "Submitted Forms"
+  val TITLE_CLASS = "pageHeadlineText"
+  val PAGE_TITLE_XPATH = "//*[@class='" + TITLE_CLASS + "' and .//text()='" + PAGE_TITLE + "']"
+  val DIV_ID = "listTable"
+  val SUBMITTED_FORMS_TABLE_XPATH = "//div[@id='" + DIV_ID + "']"
+  val SUBMITTED_FORMS_COLUMNS_XPATH = SUBMITTED_FORMS_TABLE_XPATH + "//table//th"
+  val BUSY_MSG_CLASS = "busyMsg"
+  val FORM_FILTER_ID = "formFilter"
+  val INNER_HTML = "innerHTML"
+  val TOOL_BAR_ID = "submitted.forms.list.toolbar.contentWidget"
+  val HELP_ICON_ID = "submittedFormsListInPageHelp"
+  val EXCEL_DOWNLOAD_ICON_XPATH = "//a[@id = 'downloadList']//img[contains(@src, 'share_detail_excel.png')]"
+  val HELP_ICON_XPATH = "//a[@id = '"+HELP_ICON_ID+"']//img[contains(@src,'question_24.png')]"
+  val TOOL_BAR_EXPAND_OR_COLLAPSE_IMAGE_ID = "submitted.forms.list.toolbar.contentWidgetImage"
+  val COLLAPSE_IMAGE = "widget_Collapse.gif"
+  val EXPAND_IMAGE = "widget_Expand.gif"
+  val GROUP_FILTER_ID = "groupFilter"
+  val FORM_BUTTON_ID = "formsList"
+}

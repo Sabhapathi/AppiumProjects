@@ -1,0 +1,22 @@
+Feature: Xora
+  Scenario: Jobs: Sync first
+
+    Then I perform Sync
+    Then I touch "Jobs" feature icon
+    #Then I press image button number 5
+    Then I wait for 2 seconds
+
+  Scenario: Jobs:CreateJob
+    Then I press MJC button to create a job
+    Then I see the text "Create New Job"
+    Then I check the check-box
+    Then I press "Next"
+    Then I select a JobType "3 Action Jobs" in the list
+    Then I press "Next"
+    Then I enter "mjcjob" into EditText with name "Job Name"
+    Then I press "Start Job"
+
+  Scenario: Jobs:Job Actions
+    Then I see the text "Start"
+    Then I press "Hold"
+    Then I press "End" 

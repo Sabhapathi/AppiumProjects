@@ -1,0 +1,51 @@
+Feature:Xora
+  
+  
+Scenario: Settings:Sync first
+  
+        Then I press Home button
+		Then I wait for 2 seconds 
+        #Then I press Sync button
+        Then I wait for 10 seconds 	
+       
+	    
+Scenario:Settings
+
+Then I press "Settings" 
+  Then I wait for 5 seconds 
+Then I press "Send Current Location"
+Then I press "Yes"
+Then I wait for 2 seconds 
+Then I press "Send Log to Server"
+Then I press "Yes"
+Then I wait for 2 seconds 
+ 
+Scenario: Advanced Settings   
+
+	Then I press "Advanced Options" 
+    Then I enter "4321" into Enter Code
+    Then I press "Submit"
+
+Scenario: Advanced Settings:Log Options    
+    Then I press "Log Options"
+    Then I press "Done"
+Then I wait for 2 seconds 
+#Scenario: Advanced Settings:Clear Logs    
+ #   Then I press "Clear Log"
+#	Then I press "No"
+#	Then I wait for 2 seconds 
+#Scenario: Advanced Settings:Debug
+   # Then I press "Debug"
+    #Then I move back
+Scenario: Advanced Settings: Clear Record Store    
+    Then I press "Clear Record Store"
+    Then I press "No"
+	Then I wait for 2 seconds 
+Scenario: Advanced Settings: Clear activation    
+    Then I press "Clear Activation"
+    Then I press "Yes"
+    
+   # Then I move back
+	#Then I move back
+    
+	 

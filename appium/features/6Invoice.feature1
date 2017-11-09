@@ -1,0 +1,59 @@
+Feature: Xora
+
+  Scenario: Invoices
+
+
+
+  Scenario: Job for Invoicing
+    Then I wait for 5 seconds
+    Then I wait for "Jobs"
+    Then I press "Jobs"
+    Then I wait for 5 seconds
+    Then I press "New Job"
+    Then I wait for 2 seconds
+    Then I see the text "Automatically Start Job"
+    Then I uncheck the check-box
+     # Then I check "Start Job" checkbox
+  #Then I checked "Start Job" checkbox should be checked
+    Then I press "Next"
+    Then I press "<none selected>"
+    Then I wait for 2 seconds
+    Then I see the text "3 Action Jobs"
+    Then I wait for 2 seconds
+    Then I press text "3 Action Jobs"
+    Then I wait for 2 seconds
+    Then I press "Next"
+    Then I wait for 2 seconds
+    Then I enter "Invoicing Job" into EditText field 1
+    Then I press "Create Job"
+    Then I wait for 10 seconds
+    Then I press Home button
+    Then I wait for 3 seconds
+
+  Scenario: Invoices
+    Then I press "Invoices"
+    Then I press "Select a Job"
+    Then I press "Invoicing Job"
+    Then I press "Add Part"
+    Then I press "Select Part Category"
+    Then I press text "Plumbing"
+    Then I press "Select Part"
+    Then I press text "Pipes"
+    Then I press "Add"
+    Then I press "Submit"
+
+   Scenario: Complete the Invoice Job
+     Then I wait for 5 seconds
+     Then I wait for "1 Job"
+     Then I press "1 Job"
+     Then I press "Invoicing Job"
+     Then I wait for 10 seconds
+     Then I press text "Actions"
+     Then I wait for 2 seconds
+     Then I press "Start"
+     Then I wait for 2 seconds
+     Then I press "Hold"
+     Then I press "End"
+     Then I wait for 2 seconds
+     Then I press "Skip"
+     Then I wait for 10 seconds

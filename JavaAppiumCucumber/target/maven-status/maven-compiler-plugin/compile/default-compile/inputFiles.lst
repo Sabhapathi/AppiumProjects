@@ -1,0 +1,9 @@
+C:\QAHome\JavaAppiumCucumber\src\main\java\pageObjects\BasePage.java
+C:\QAHome\JavaAppiumCucumber\src\main\java\driver\Device.java
+C:\QAHome\JavaAppiumCucumber\src\main\java\driver\Emulator.java
+C:\QAHome\JavaAppiumCucumber\src\main\java\driver\DriverFactory.java
+C:\QAHome\JavaAppiumCucumber\src\main\java\runner\RunCukesTest.java
+C:\QAHome\JavaAppiumCucumber\src\main\java\stepDefinition\BrowserSteps.java
+C:\QAHome\JavaAppiumCucumber\src\main\java\pageObjects\MobilePage.java
+C:\QAHome\JavaAppiumCucumber\src\main\java\driver\PropertyReader.java
+C:\QAHome\JavaAppiumCucumber\src\main\java\stepDefinition\MobileSteps.java

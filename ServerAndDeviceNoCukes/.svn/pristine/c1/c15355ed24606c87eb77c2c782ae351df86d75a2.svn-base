@@ -1,0 +1,13 @@
+package xora.mobileappdriver;
+
+/**
+ * Created by Nandini.Sullekal on 4/29/2016.
+ */
+public class Device {
+
+    public static final String platformName = "Android";
+    public static final String deviceName = "XT1058";
+    public static final String device = "TA622001O0";
+    public static final String URL = "http://127.0.0.1:4723/wd/hub";
+
+}

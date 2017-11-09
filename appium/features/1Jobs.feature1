@@ -1,0 +1,65 @@
+Feature: Xora
+
+  Scenario: Jobs:Open Jobs
+
+    Then I wait for 5 seconds
+    Then I wait for "Jobs"
+    Then I press "Jobs"
+    Then I wait for 5 seconds
+
+  Scenario: Jobs:Create Job
+    Then I press "New Job"
+    Then I wait for 2 seconds
+    Then I press "<none selected>"
+    Then I wait for 2 seconds
+    Then I see the text "3 Action Jobs"
+    Then I wait for 2 seconds
+    Then I press text "3 Action Jobs"
+    Then I wait for 2 seconds
+    Then I press "Next"
+    Then I wait for 3 seconds
+    Then I enter "DeviceJob1" into EditText field 1
+    Then I press "Next"
+    Then I press "Create Job"
+    Then I wait for 10 seconds
+
+    Then I press "DeviceJob1"
+    Then I wait for 10 seconds
+    Then I press text "Actions"
+    Then I wait for 2 seconds
+    Then I press "Start"
+    Then I wait for 2 seconds
+    Then I press "Hold"
+    Then I press "End"
+    Then I wait for 2 seconds
+    Then I press "Skip"
+    Then I wait for 10 seconds
+
+  Scenario: Jobs:Auto Start Job
+    Then I press "New Job"
+    Then I wait for 2 seconds
+    Then I see the text "Automatically Start Job"
+    Then I check the check-box
+     # Then I check "Start Job" checkbox
+  #Then I checked "Start Job" checkbox should be checked
+    Then I press "Next"
+    Then I press "<none selected>"
+    Then I wait for 2 seconds
+    Then I see the text "3 Action Jobs"
+    Then I wait for 2 seconds
+    Then I press text "3 Action Jobs"
+    Then I wait for 2 seconds
+    Then I press "Next"
+    Then I wait for 2 seconds
+    Then I enter "DeviceJob2" into EditText field 1
+    Then I press "Start Job"
+    Then I wait for 12 seconds
+    Then I press "Hold"
+    Then I press "End"
+    Then I wait for 2 seconds
+    Then I press "Skip"
+    Then I wait for 2 seconds
+
+
+
+	
